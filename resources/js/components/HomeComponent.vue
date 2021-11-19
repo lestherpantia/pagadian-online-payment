@@ -2,11 +2,15 @@
     <div class="card">
         <div class="card-body p-0">
 
-
             <loading
                 :active.sync="isLoading"
                 :is-full-page="fullPage">
             </loading>
+
+
+<!--            <div class="alert-msg">-->
+<!--                {{ message }}-->
+<!--            </div>-->
 
 
             <div class="button-container pl-3 pr-3">
@@ -105,6 +109,8 @@ import 'sweetalert2/src/sweetalert2.scss';
 
 export default {
 
+    // prop: [ 'message' ],
+
     data() {
         return {
             pin: '',
@@ -114,6 +120,7 @@ export default {
             fullPage: true,
             isLoading: false,
             totalAmount: 0,
+            // message: this.message,
 
             rptTableData: [],
             barangay: [],

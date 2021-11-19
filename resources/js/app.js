@@ -36,6 +36,7 @@ Vue.use(VueTheMask)
 Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 Vue.component('home-component', require('./components/HomeComponent.vue').default);
 Vue.component('payment-component', require('./components/PaymentComponent.vue').default);
+Vue.component('checkout-component', require('./components/CheckoutComponent.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
