@@ -22,40 +22,105 @@
                     </div>
                 </div>
 
-
-                <table id="rpt-table">
-                    <thead>
-                        <tr>
-                            <th style="width: 15%">PIN</th>
-                            <th style="width: 15%">ARP</th>
-                            <th>BILL NUM</th>
-                            <th style="width: 20%" class="text-center">BALANCE</th>
-                            <th style="width: 20%" class="text-center">PAYMENT</th>
-                            <th style="width: 8%" class="text-center"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(item, index) in rptTableData">
-                            <td>{{ item.pin }}</td>
-                            <td>{{ item.arp }}</td>
-                            <td>{{ item.bill_num }}</td>
-                            <td class="text-right">{{ formatPrice(item.total) }}</td>
-                            <td class="text-right">
-                                <input type="number" id="amount-to-pay" @keyup="validateAmountToPay($event, index, item.total)" :value="item.amount_to_pay" class="form-control text-right" disabled="disabled">
-                                <span class="err_amount"></span>
-                            </td>
-                            <td class="text-center"><input id="checkbox" type="checkbox" v-on:change="checkPayment(index, $event)"></td>
-                        </tr>
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <th colspan="5">Total Amount</th>
-                            <th style="text-align: right">{{ formatPrice(totalAmount) }}</th>
-                        </tr>
-                    </tfoot>
+                <div class="table-container p-2">
+                    <table id="rpt-table" style="font-size: 12px">
+                        <thead>
+                            <tr class="border">
+                                <th style="width: 5%" class="text-center p-2"></th>
+                                <th style="width: 15%" class="p-2">BILL NUM</th>
+                                <th style="width: 15%" class="p-2">BILL DATE</th>
+                                <th style="width: 15%" class="p-2">PIN</th>
+                                <th style="width: 15%" class="p-2">ARP</th>
+                                <th style="width: 15%" class="p-2 text-center">YEAR</th>
+                                <th style="width: 20%" class="p-2 text-center">BALANCE</th>
+    <!--                            <th style="width: 20%" class="text-center">PAYMENT</th>-->
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template v-for="(item, index) in rptTableData">
+                                <tr>
+                                    <td style="width: 5%; vertical-align: top" class="text-center p-2">
+                                        <input v-if="item[0].w_checkout === true" checked="checked" id="checkbox" type="checkbox" v-on:change="checkPayment(index, $event)">
+                                        <input v-else id="checkbox" type="checkbox" v-on:change="checkPayment(index, $event)">
+                                    </td>
+                                    <td style="width: 15%; vertical-align: top" class="text-left p-2" colspan="6">
+                                        <b>{{ index }}</b>
+                                    </td>
+                                </tr>
+                                <template v-for="data in rptTableData[index]">
+                                    <tr>
+                                        <td style="width: 15%" class="text-left p-2" colspan="2"></td>
+                                        <td style="width: 15%" class="text-left p-2">{{ data.trnx_date }}</td>
+                                        <td style="width: 15%" class="text-left p-2">{{ data.pin }}</td>
+                                        <td style="width: 15%" class="text-left p-2">{{ data.arp }}</td>
+                                        <td style="width: 15%" class="text-center p-2">{{ data.yr1 }}</td>
+                                        <td style="width: 20%" class="text-right p-2">{{ formatPrice(data.ln_amnt) }}</td>
+                                    </tr>
+                                </template>
+                                <tr class="border-bottom">
+                                    <td style="width: 15%; vertical-align: top" class="text-right p-2" colspan="6">
+                                        <b>TOTAL :</b>
+                                    </td>
+                                    <td style="width: 15%; vertical-align: top" class="text-right p-2" >
+                                        <b>{{ formatPrice(computeTotals(index)) }}</b>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                        <tfoot class="border-top">
+                            <tr>
+                                <th colspan="6" class="text-right pt-3 pb-3">TOTAL AMOUNT :</th>
+                                <th class="text-right pt-3 pb-3 pr-2">{{ formatPrice(totalAmount) }}</th>
+                            </tr>
+                        </tfoot>
                 </table>
             </div>
         </div>
+            <div class="card-footer">
+
+            </div>
+    </div>
+
+
+
+        <!--                        <tr v-for="(item, index) in rptTableData">-->
+
+<!--                            <td style="width: 15%; vertical-align: top" class="text-left p-1">-->
+<!--                                {{ index }}-->
+<!--                            </td>-->
+
+<!--                            <td colspan="5" class="p-1">-->
+<!--                                <table style="width: 100%">-->
+<!--                                    <tr v-for="data in rptTableData[index]">-->
+<!--                                        <td style="width: 15%" class="text-left pt-1">{{ data.trnx_date }}</td>-->
+<!--                                        <td style="width: 15%" class="text-left pt-1">{{ data.pin }}</td>-->
+<!--                                        <td style="width: 15%" class="text-left pt-1">{{ data.arp }}</td>-->
+<!--                                        <td style="width: 15%" class="text-left pt-1">{{ data.yr1 }}</td>-->
+<!--                                        <td style="width: 20%" class="text-left pt-1">{{ data.ln_amnt }}</td>-->
+<!--                                    </tr>-->
+<!--                                </table>-->
+<!--                            </td>-->
+
+<!--                            <td style="width: 8%" class="text-left p-1">-->
+
+<!--                            </td>-->
+<!--                        </tr>-->
+
+
+
+<!--                            <td>{{ item.bill_num }}</td>-->
+<!--                            <td>{{ item.pin }}</td>-->
+<!--                            <td>{{ item.arp }}</td>-->
+<!--                            <td class="text-right">{{ formatPrice(item.total) }}</td>-->
+<!--&lt;!&ndash;                            <td class="text-right">&ndash;&gt;-->
+<!--&lt;!&ndash;                                <input type="number" id="amount-to-pay" @keyup="validateAmountToPay($event, index, item.total)" :value="item.amount" class="form-control text-right" disabled="disabled">&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;                                <input v-else type="number" id="amount-to-pay" @keyup="validateAmountToPay($event, index, item.total)" :value="item.amount" class="form-control text-right" disabled="disabled">&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;                                <span class="err_amount"></span>&ndash;&gt;-->
+<!--&lt;!&ndash;                            </td>&ndash;&gt;-->
+<!--                            <td class="text-center">-->
+<!--                                <input id="checkbox" type="checkbox" v-on:change="checkPayment(index, $event)">-->
+<!--&lt;!&ndash;                                <input v-else id="checkbox" type="checkbox" v-on:change="checkPayment(index, $event)">&ndash;&gt;-->
+<!--                            </td>-->
 
         <div class="card mb-3 payment-details">
             <div class="card-header">
@@ -121,28 +186,28 @@
                                         <i class="err fas fa-exclamation-circle"></i>
                                     </div>
 
-                                    <div class="line"></div>
+<!--                                    <div class="line"></div>-->
 
-                                    <!--                   card details                     -->
-                                    <div class="card-info col-6">
-                                        <label>Card Number</label>
-                                        <the-mask :mask="['#### #### #### ####']" id="card-no" type="text" class="form-control" placeholder="xxxx xxxx xxxx xxxx" v-model="payment.card_no"/>
-                                        <i class="icon fa fa-credit-card"></i>
-                                        <i class="err fas fa-exclamation-circle"></i>
-                                    </div>
+<!--                                    &lt;!&ndash;                   card details                     &ndash;&gt;-->
+<!--                                    <div class="card-info col-6">-->
+<!--                                        <label>Card Number</label>-->
+<!--                                        <the-mask :mask="['#### #### #### ####']" id="card-no" type="text" class="form-control" placeholder="xxxx xxxx xxxx xxxx" v-model="payment.card_no"/>-->
+<!--                                        <i class="icon fa fa-credit-card"></i>-->
+<!--                                        <i class="err fas fa-exclamation-circle"></i>-->
+<!--                                    </div>-->
 
-                                    <div class="card-info col-3">
-                                        <label>Expiry Date</label>
-                                        <the-mask :mask="['##/##']" id="exp" type="text" class="form-control" placeholder="00/00" v-model="payment.exp_date"/>
-                                        <i class="icon far fa-calendar-alt"></i>
-                                        <i class="err fas fa-exclamation-circle"></i>
-                                    </div>
-                                    <div class="card-info col-3">
-                                        <label>CVC/CVV</label>
-                                        <the-mask :mask="['###']" type="text" id="cvc" class="form-control" maxlength="3" v-model="payment.cvc"/>
-                                        <i class="icon fas fa-lock"></i>
-                                        <i class="err fas fa-exclamation-circle"></i>
-                                    </div>
+<!--                                    <div class="card-info col-3">-->
+<!--                                        <label>Expiry Date</label>-->
+<!--                                        <the-mask :mask="['##/##']" id="exp" type="text" class="form-control" placeholder="00/00" v-model="payment.exp_date"/>-->
+<!--                                        <i class="icon far fa-calendar-alt"></i>-->
+<!--                                        <i class="err fas fa-exclamation-circle"></i>-->
+<!--                                    </div>-->
+<!--                                    <div class="card-info col-3">-->
+<!--                                        <label>CVC/CVV</label>-->
+<!--                                        <the-mask :mask="['###']" type="text" id="cvc" class="form-control" maxlength="3" v-model="payment.cvc"/>-->
+<!--                                        <i class="icon fas fa-lock"></i>-->
+<!--                                        <i class="err fas fa-exclamation-circle"></i>-->
+<!--                                    </div>-->
                                 </div>
                             </div>
                         </div>
@@ -162,10 +227,10 @@
                                     </thead>
                                     <tbody>
                                         <tr v-for="data in rptTableData">
-                                            <td v-if="data.amount_to_pay !== 0">{{ data.pin }}</td>
-                                            <td v-if="data.amount_to_pay !== 0">{{ data.arp }}</td>
-                                            <td v-if="data.amount_to_pay !== 0">{{ data.bill_num }}</td>
-                                            <td style="text-align: right" v-if="data.amount_to_pay !== 0">{{ formatPrice(data.amount_to_pay) }}</td>
+                                            <td v-if="data.amount !== 0">{{ data.pin }}</td>
+                                            <td v-if="data.amount !== 0">{{ data.arp }}</td>
+                                            <td v-if="data.amount !== 0">{{ data.bill_num }}</td>
+                                            <td style="text-align: right" v-if="data.amount !== 0">{{ formatPrice(data.amount) }}</td>
                                         </tr>
                                     </tbody>
                                     <tfoot>
@@ -194,182 +259,6 @@
 
             </div>
         </div>
-
-        <!-- card detail modal -->
-<!--        <div class="modal" tabindex="-1" role="dialog" id="checkout-modal">-->
-<!--            <div class="modal-dialog" role="document">-->
-<!--                <div class="modal-content">-->
-<!--                    <div class="modal-header">-->
-<!--                        <img src="public/image/paymongo.png">-->
-<!--                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">-->
-<!--                            <span aria-hidden="true">&times;</span>-->
-<!--                        </button>-->
-<!--                    </div>-->
-<!--                    <div class="modal-body">-->
-
-<!--&lt;!&ndash;                        <div class="payment-container">&ndash;&gt;-->
-
-<!--&lt;!&ndash;                            <div class="alert-msg">&ndash;&gt;-->
-<!--&lt;!&ndash;                                <ul v-for="err in err_msg">&ndash;&gt;-->
-<!--&lt;!&ndash;                                    <li>{{ err }}</li>&ndash;&gt;-->
-<!--&lt;!&ndash;                                </ul>&ndash;&gt;-->
-<!--&lt;!&ndash;                            </div>&ndash;&gt;-->
-
-<!--&lt;!&ndash;                            <label for="payment-method">Payment method:</label>&ndash;&gt;-->
-<!--&lt;!&ndash;                            <select id="payment-method" v-model="paymentMethod" class="form-control">&ndash;&gt;-->
-<!--&lt;!&ndash;                                <option value="card">Debit/Credit Card</option>&ndash;&gt;-->
-<!--&lt;!&ndash;                                <option value="grab_pay">Grab Pay</option>&ndash;&gt;-->
-<!--&lt;!&ndash;                                <option value="gcash">Gcash</option>&ndash;&gt;-->
-<!--&lt;!&ndash;                            </select>&ndash;&gt;-->
-
-<!--&lt;!&ndash;                            <div class="personal-info" v-if="paymentMethod !== ''">&ndash;&gt;-->
-<!--&lt;!&ndash;                                <div v-if="paymentMethod === 'card' || paymentMethod === 'gcash'">&ndash;&gt;-->
-<!--&lt;!&ndash;                                    <div class="row">&ndash;&gt;-->
-<!--&lt;!&ndash;                                        <div class="card-info col-12">&ndash;&gt;-->
-<!--&lt;!&ndash;                                            <label>Card Holder</label>&ndash;&gt;-->
-<!--&lt;!&ndash;                                            <input id="fullname" type="text" class="form-control" style="padding-left: 40px;" v-model="payment.fullname">&ndash;&gt;-->
-<!--&lt;!&ndash;                                            <i class="icon fas fa-user"></i>&ndash;&gt;-->
-<!--&lt;!&ndash;                                            <i class="err fas fa-exclamation-circle"></i>&ndash;&gt;-->
-<!--&lt;!&ndash;                                        </div>&ndash;&gt;-->
-
-<!--&lt;!&ndash;                                        <div class="card-info col-12">&ndash;&gt;-->
-<!--&lt;!&ndash;                                            <label>Billing Address</label>&ndash;&gt;-->
-<!--&lt;!&ndash;                                            <input id="address" type="text" class="form-control" style="padding-left: 40px;" v-model="payment.address">&ndash;&gt;-->
-<!--&lt;!&ndash;                                            <i class="icon fas fa-home"></i>&ndash;&gt;-->
-<!--&lt;!&ndash;                                            <i class="err fas fa-exclamation-circle"></i>&ndash;&gt;-->
-<!--&lt;!&ndash;                                        </div>&ndash;&gt;-->
-
-<!--&lt;!&ndash;                                        <div class="card-info col-4">&ndash;&gt;-->
-<!--&lt;!&ndash;                                            <label>City</label>&ndash;&gt;-->
-<!--&lt;!&ndash;                                            <input id="city" type="text" class="form-control" style="padding-left: 40px;" v-model="payment.city">&ndash;&gt;-->
-<!--&lt;!&ndash;                                            <i class="icon fas fa-home"></i>&ndash;&gt;-->
-<!--&lt;!&ndash;                                            <i class="err fas fa-exclamation-circle"></i>&ndash;&gt;-->
-<!--&lt;!&ndash;                                        </div>&ndash;&gt;-->
-
-<!--&lt;!&ndash;                                        <div class="card-info col-4">&ndash;&gt;-->
-<!--&lt;!&ndash;                                            <label>State</label>&ndash;&gt;-->
-<!--&lt;!&ndash;                                            <input id="state" type="text" class="form-control" style="padding-left: 40px;" v-model="payment.state">&ndash;&gt;-->
-<!--&lt;!&ndash;                                            <i class="icon fas fa-home"></i>&ndash;&gt;-->
-<!--&lt;!&ndash;                                            <i class="err fas fa-exclamation-circle"></i>&ndash;&gt;-->
-<!--&lt;!&ndash;                                        </div>&ndash;&gt;-->
-
-<!--&lt;!&ndash;                                        <div class="card-info col-4">&ndash;&gt;-->
-<!--&lt;!&ndash;                                            <label>Postal Code</label>&ndash;&gt;-->
-<!--&lt;!&ndash;                                            <input id="postal" type="text" class="form-control" style="padding-left: 40px;" v-model="payment.postal_code">&ndash;&gt;-->
-<!--&lt;!&ndash;                                            <i class="icon fas fa-home"></i>&ndash;&gt;-->
-<!--&lt;!&ndash;                                            <i class="err fas fa-exclamation-circle"></i>&ndash;&gt;-->
-<!--&lt;!&ndash;                                        </div>&ndash;&gt;-->
-
-<!--&lt;!&ndash;                                        <div class="line"></div>&ndash;&gt;-->
-
-<!--&lt;!&ndash;                                        &lt;!&ndash;                   card details                     &ndash;&gt;&ndash;&gt;-->
-<!--&lt;!&ndash;                                        <div class="card-info col-6">&ndash;&gt;-->
-<!--&lt;!&ndash;                                            <label>Card Number</label>&ndash;&gt;-->
-<!--&lt;!&ndash;                                            <the-mask :mask="['#### #### #### ####']" id="card-no" type="text" class="form-control" placeholder="xxxx xxxx xxxx xxxx" v-model="payment.card_no"/>&ndash;&gt;-->
-<!--&lt;!&ndash;                                            <i class="icon fa fa-credit-card"></i>&ndash;&gt;-->
-<!--&lt;!&ndash;                                            <i class="err fas fa-exclamation-circle"></i>&ndash;&gt;-->
-<!--&lt;!&ndash;                                        </div>&ndash;&gt;-->
-
-<!--&lt;!&ndash;                                        <div class="card-info col-3">&ndash;&gt;-->
-<!--&lt;!&ndash;                                            <label>Expiry Date</label>&ndash;&gt;-->
-<!--&lt;!&ndash;                                            <the-mask :mask="['##/##']" id="exp" type="text" class="form-control" placeholder="00/00" v-model="payment.exp_date"/>&ndash;&gt;-->
-<!--&lt;!&ndash;                                            <i class="icon far fa-calendar-alt"></i>&ndash;&gt;-->
-<!--&lt;!&ndash;                                            <i class="err fas fa-exclamation-circle"></i>&ndash;&gt;-->
-<!--&lt;!&ndash;                                        </div>&ndash;&gt;-->
-<!--&lt;!&ndash;                                        <div class="card-info col-3">&ndash;&gt;-->
-<!--&lt;!&ndash;                                            <label>CVC/CVV</label>&ndash;&gt;-->
-<!--&lt;!&ndash;                                            <the-mask :mask="['###']" type="text" id="cvc" class="form-control" maxlength="3" v-model="payment.cvc"/>&ndash;&gt;-->
-<!--&lt;!&ndash;                                            <i class="icon fas fa-lock"></i>&ndash;&gt;-->
-<!--&lt;!&ndash;                                            <i class="err fas fa-exclamation-circle"></i>&ndash;&gt;-->
-<!--&lt;!&ndash;                                        </div>&ndash;&gt;-->
-<!--&lt;!&ndash;                                    </div>&ndash;&gt;-->
-<!--&lt;!&ndash;                                </div>&ndash;&gt;-->
-<!--&lt;!&ndash;                                &lt;!&ndash;                                <label for="amount">Amount</label>&ndash;&gt;&ndash;&gt;-->
-<!--&lt;!&ndash;                                &lt;!&ndash;                                <input class="form-control" id="amount" v-bind:value="formatPrice(totalAmount)" readonly="readonly">&ndash;&gt;&ndash;&gt;-->
-<!--&lt;!&ndash;                            </div>&ndash;&gt;-->
-<!--&lt;!&ndash;                        </div>&ndash;&gt;-->
-
-<!--                    </div>-->
-<!--                    <div class="modal-footer">-->
-<!--                        <button v-if="paymentMethod !== ''" v-on:click="confirmDetails" class="btn btn-info form-control"><i class="fas fa-check mr-2"></i> Pay now!</button>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--        <div class="modal" tabindex="-1" role="dialog" id="card-info-modal">-->
-<!--            <div class="modal-dialog" role="document">-->
-<!--                <div class="modal-content">-->
-<!--                    <div class="modal-header">-->
-<!--                        <img src="public/image/paymongo.png">-->
-<!--                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">-->
-<!--                            <span aria-hidden="true">&times;</span>-->
-<!--                        </button>-->
-<!--                    </div>-->
-<!--                    <div class="modal-body">-->
-<!--                        <div class="payment-preview">-->
-
-<!--                            <table class="payment-details" style="width: 100%">-->
-<!--                                <tr>-->
-<!--                                    <th style="width: 30%">Card Holder</th>-->
-<!--                                    <td>: {{ payment.fullname }}</td>-->
-<!--                                </tr>-->
-<!--                                <tr>-->
-<!--                                    <th style="width: 30%">Billing Address</th>-->
-<!--                                    <td>: {{ payment.address }}</td>-->
-<!--                                </tr>-->
-<!--                                <tr>-->
-<!--                                    <th style="width: 30%">City</th>-->
-<!--                                    <td>: {{ payment.city }}</td>-->
-<!--                                </tr>-->
-<!--                                <tr>-->
-<!--                                    <th style="width: 30%">State</th>-->
-<!--                                    <td>: {{ payment.state }}</td>-->
-<!--                                </tr>-->
-<!--                                <tr>-->
-<!--                                    <th style="width: 30%">Postal Code</th>-->
-<!--                                    <td>: {{ payment.postal_code }}</td>-->
-<!--                                </tr>-->
-<!--                                <tr>-->
-<!--                                    <th style="width: 30%">Payment Method</th>-->
-<!--                                    <td>: {{ paymentMethod }}</td>-->
-<!--                                </tr>-->
-<!--                                <tr>-->
-<!--                                    <th style="width: 30%">Card Number</th>-->
-<!--                                    <td>: {{ payment.card_no }}</td>-->
-<!--                                </tr>-->
-<!--                            </table>-->
-<!--                            <table class="rpt-breakdown" style="width: 100%">-->
-<!--                                <thead>-->
-<!--                                <tr>-->
-<!--                                    <th>PIN</th>-->
-<!--                                    <th>ARP</th>-->
-<!--                                    <th>BILL#</th>-->
-<!--                                    <th style="text-align: right">TO PAY</th>-->
-<!--                                </tr>-->
-<!--                                </thead>-->
-<!--                                <tbody>-->
-<!--                                <tr v-for="data in rptTableData">-->
-<!--                                    <td v-if="data.amount_to_pay !== 0">{{ data.pin }}</td>-->
-<!--                                    <td v-if="data.amount_to_pay !== 0">{{ data.arp }}</td>-->
-<!--                                    <td v-if="data.amount_to_pay !== 0">{{ data.bill_num }}</td>-->
-<!--                                    <td style="text-align: right" v-if="data.amount_to_pay !== 0">{{ formatPrice(data.amount_to_pay) }}</td>-->
-<!--                                </tr>-->
-<!--                                </tbody>-->
-<!--                                <tfoot>-->
-<!--                                <tr>-->
-<!--                                    <th colspan="3">TOTAL:</th>-->
-<!--                                    <th style="text-align: right">{{ formatPrice(totalAmount) }}</th>-->
-<!--                                </tr>-->
-<!--                                </tfoot>-->
-<!--                            </table>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                    <div class="modal-footer">-->
-<!--                        <button class="btn btn-info form-control" style="font-size: 12px;" v-on:click="confirmPayment">Confirm Payment</button>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
     </div>
 </template>
 
@@ -410,10 +299,18 @@ export default {
             return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
         },
 
+        computeTotals(index) {
+            let amountArr = [];
+            Object.entries(this.rptTableData[index]).forEach(([key, val]) => { amountArr.push(val.ln_amnt); });
+            const total = amountArr.reduce(function(total, number) { return total + parseFloat(number); }, 0);
+            return total;
+        },
+
         intialData() {
             this.isLoading = true;
             axios.get('payment/initial_data').then(response => {
-                this.rptTableData = response.data.data;
+                this.rptTableData = response.data.bills;
+                this.totalAmount = response.data.checkout_total;
             }).finally(() => this.isLoading = false);
         },
 
@@ -451,13 +348,12 @@ export default {
                 return;
             }
 
-            $('.payment-details').show();
+            // $('.payment-details').show();
 
-
+            window.location.href = 'checkout';
         },
 
-        confirmDetails()
-        {
+        confirmDetails() {
             /* validate inputs */
             let no_input = false;
             let message = [];
@@ -477,26 +373,26 @@ export default {
                 }
                 else
                 {
-                    if($(this).attr('id') === 'card-no' && $(this).val().length < 16)
-                    {
-                        $(this).addClass('invalid');
-                        $(this).siblings('.err').show();
-                        message.push('Invalid card number format, Must be 16 digits');
-                    }
-
-                    if($(this).attr('id') === 'exp' && $(this).val().length < 4)
-                    {
-                        $(this).addClass('invalid');
-                        $(this).siblings('.err').show();
-                        message.push('Invalid card expiry date');
-                    }
-
-                    if($(this).attr('id') === 'cvc' && $(this).val().length < 3)
-                    {
-                        $(this).addClass('invalid');
-                        $(this).siblings('.err').show();
-                        message.push('Invalid CVC/CVV');
-                    }
+                    // if($(this).attr('id') === 'card-no' && $(this).val().length < 16)
+                    // {
+                    //     $(this).addClass('invalid');
+                    //     $(this).siblings('.err').show();
+                    //     message.push('Invalid card number format, Must be 16 digits');
+                    // }
+                    //
+                    // if($(this).attr('id') === 'exp' && $(this).val().length < 4)
+                    // {
+                    //     $(this).addClass('invalid');
+                    //     $(this).siblings('.err').show();
+                    //     message.push('Invalid card expiry date');
+                    // }
+                    //
+                    // if($(this).attr('id') === 'cvc' && $(this).val().length < 3)
+                    // {
+                    //     $(this).addClass('invalid');
+                    //     $(this).siblings('.err').show();
+                    //     message.push('Invalid CVC/CVV');
+                    // }
                 }
             });
 
@@ -507,14 +403,14 @@ export default {
 
             if(this.payment.exp_date !== null)
             {
-                const exp = this.payment.exp_date.match(/.{1,2}/g);
-
-                if(exp[0] > 12)
-                {
-                    $('#exp').addClass('invalid');
-                    $('#exp').siblings('.err').show();
-                    message.push('Invalid Month Format!');
-                }
+                // const exp = this.payment.exp_date.match(/.{1,2}/g);
+                //
+                // if(exp[0] > 12)
+                // {
+                //     $('#exp').addClass('invalid');
+                //     $('#exp').siblings('.err').show();
+                //     message.push('Invalid Month Format!');
+                // }
             }
 
             if(message.length !== 0)
@@ -527,19 +423,54 @@ export default {
             this.confirmPayment();
         },
 
-        checkPayment(index, e)
-        {
-            let checked = e.target.checked;
-            let amount_to_pay = !checked ? 0 : this.rptTableData[index]['total'];
-            $('#rpt-table tbody tr:eq(' + index + ')').find('input[type=number]').attr('disabled', checked ? false : true);
-            $('#rpt-table tbody tr:eq(' + index + ')').find('input[type=number]').removeClass('invalid').siblings('.err_amount').text('');
-            this.rptTableData[index]['for_payment'] = checked;
-            this.rptTableData[index]['amount_to_pay'] = amount_to_pay;
-            this.reComputeTotalAmount();
+        checkPayment(index, e) {
+
+            // console.log(index);
+            //
+            // let amount_to_pay = e.target.checked ? this.rptTableData[index]['total'] : 0;
+            // let checked = e.target.checked;
+            //
+            // this.totalAmount = 0;
+
+            let total = this.computeTotals(index);
+
+            if(e.target.checked)
+            {
+                this.totalAmount += total;
+            }
+            else
+            {
+                this.totalAmount -= total;
+            }
+
+            this.isLoading = true;
+
+            axios.post('payment/add_checkout', {
+                bill_num: index,
+                amount: e.target.checked ? total : 0
+            })
+            .then(response => {
+                console.log(response.status);
+            })
+            .finally(() => {
+                this.isLoading = false
+            });
+
+
+
+            //
+            // axios.post('payment/add_checkout', {
+            //     data: this.rptTableData[index],
+            // });
+
+            // $('#rpt-table tbody tr:eq(' + index + ')').find('input[type=number]').attr('disabled', checked ? false : true);
+            // $('#rpt-table tbody tr:eq(' + index + ')').find('input[type=number]').removeClass('invalid').siblings('.err_amount').text('');
+            // this.rptTableData[index]['for_payment'] = checked;
+            // this.rptTableData[index]['amount'] = amount_to_pay;
+            // this.reComputeTotalAmount();
         },
 
-        validateAmountToPay(e, index, amount)
-        {
+        validateAmountToPay(e, index, amount) {
             if(e.target.value < 100)
             {
                 $('#rpt-table tbody tr:eq(' + index + ') #' + e.target.id).addClass('invalid').siblings('.err_amount').text('Must be greater than 100');
@@ -557,10 +488,9 @@ export default {
             this.reComputeTotalAmount();
         },
 
-        reComputeTotalAmount()
-        {
+        reComputeTotalAmount() {
             this.totalAmount = 0
-            this.rptTableData.forEach((item) => { this.totalAmount += parseFloat(item.amount_to_pay); });
+            this.rptTableData.forEach((item) => { this.totalAmount += parseFloat(item.amount); });
         },
 
         confirmPayment() {
@@ -569,7 +499,7 @@ export default {
 
             if(this.paymentMethod === 'card')
             {
-                axios.post('card_payment', {
+                axios.post('paymaya_checkout', {
                     rpt: this.rptTableData,
                     payment_method: this.paymentMethod,
                     fullname: this.payment.fullname,
@@ -582,8 +512,9 @@ export default {
                     exp_date: this.payment.exp_date,
                     cvc: this.payment.cvc
                 }).then(response => {
-                    this.messageBox('success', 'Transaction Success', response.data.message, 'Finish');
-                    setTimeout(function () { window.location.href = 'home'; }, 1500);
+                    /// setTimeout(function () { window.location.href = 'home'; }, 1500);
+                    //this.messageBox('success', 'Transaction Success', response.data.message, 'Finish');
+                    window.location.href = response.data.checkout;
                 }).catch(error => {
                     this.messageBox('error', 'Failed', error.response.data.errors, 'Okay');
                 }).finally(() => {
@@ -629,39 +560,43 @@ export default {
         font-size: 15px;
     }
 
-    #rpt-table thead {
-        /*text-align: center;*/
-    }
-
-    #rpt-table thead tr {
-        border: 1px solid #dcdde1;
-    }
-
-    #rpt-table thead tr th {
-        text-align: center;
-        font-size: 15px;
-        padding: 10px 5px;
-        color: #636e72;
-    }
-
     #rpt-table tbody tr:nth-child(odd) {
         background: whitesmoke;
     }
 
-    #rpt-table tbody tr td {
-        text-align: center;
-        font-size: 12px;
-        padding: 5px 10px;
-        border-bottom: 1px solid #dcdde1;
-    }
+    /*#rpt-table thead {*/
+    /*    !*text-align: center;*!*/
+    /*}*/
 
-    #rpt-table tfoot tr th {
-        border-top: 3px dashed #dfe6e9;
-        padding: 10px;
-        font-size: 18px;
-        font-weight: bold;
-        color:#636e72;
-    }
+    /*#rpt-table thead tr {*/
+    /*    border: 1px solid #dcdde1;*/
+    /*}*/
+
+    /*#rpt-table thead tr th {*/
+    /*    text-align: center;*/
+    /*    font-size: 15px;*/
+    /*    padding: 10px 5px;*/
+    /*    color: #636e72;*/
+    /*}*/
+
+    /*#rpt-table tbody tr:nth-child(odd) {*/
+    /*    background: whitesmoke;*/
+    /*}*/
+
+    /*#rpt-table tbody tr td {*/
+    /*    text-align: center;*/
+    /*    font-size: 12px;*/
+    /*    padding: 5px 10px;*/
+    /*    border-bottom: 1px solid #dcdde1;*/
+    /*}*/
+
+    /*#rpt-table tfoot tr th {*/
+    /*    border-top: 3px dashed #dfe6e9;*/
+    /*    padding: 10px;*/
+    /*    font-size: 18px;*/
+    /*    font-weight: bold;*/
+    /*    color:#636e72;*/
+    /*}*/
 
     #return, #checkout {
         padding: 10px;

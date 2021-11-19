@@ -9,6 +9,17 @@ class Collne4 extends Model
 {
     use HasFactory;
 
+    /* connection */
     protected $connection = 'pgsql_2';
+
+    /* database */
     protected $table = 'collne4';
+
+    /* prevent saving timestamp */
+    public $timestamps = false;
+
+    /* prevent saving primary keys */
+    public $incrementing = false;
+    protected $primaryKey = null;
+
 }
