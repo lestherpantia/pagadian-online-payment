@@ -62,16 +62,16 @@
 
 <div style="padding: 50px;">
 
-<span style="font-size: 20px;">Invoice to: MARK LESTHER PANTIA</span>
+<span style="font-size: 20px;">Received From: {{ $data['name'] }}</span>
 <table class="header-table" style="width: 100%; font-size: 13px">
 <tr>
-{{--    <th>No: {{ $data['invoice'] }}</th>--}}
+    <th>No: {{ $data['invoice'] }}</th>
 </tr>
 <tr>
-{{--    <th>Date | Time: {{ date('m/d/y H:i') }}</th>--}}
+    <th>Date | Time: {{ date('m/d/y H:i') }}</th>
 </tr>
 <tr>
-{{--    <th>Payment Type: {{ strtoupper($data['method']) }}</th>--}}
+    <th>Form of Payment: {{ strtoupper($data['method']) }}</th>
 </tr>
 </table>
 
@@ -79,11 +79,11 @@
 <tfoot>
 <tr>
 <th style="text-align: right">TRANSACTION FEE:</th>
-{{--<th style="text-align: right;">₱ {{ number_format($data['transaction_fee'], 2) }}</th>--}}
+<th style="text-align: right;">₱ {{ number_format($data['transaction_fee'], 2) }}</th>
 </tr>
 <tr>
 <th style="text-align: right">TOTAL:</th>
-{{--<th style="text-align: right;">₱ {{ number_format($data['total'], 2) }}</th>--}}
+<th style="text-align: right;">₱ {{ number_format($data['total'], 2) }}</th>
 </tr>
 </tfoot>
 <thead>
@@ -92,13 +92,13 @@
 <th style="text-align: right;">TOTAL</th>
 </tr>
 </thead>
-{{--<tbody>--}}
-{{--@foreach($data['items'] as $data)--}}
-{{--<tr>--}}
-{{--<td>{{ $data['bill_num'] }}</td>--}}
-{{--<td style="text-align: right;">₱ {{ number_format($data['amount'], 2) }}</td>--}}
-{{--</tr>--}}
-{{--@endforeach--}}
+<tbody>
+@foreach($data['items'] as $data)
+<tr>
+<td>{{ $data['bill_num'] }}</td>
+<td style="text-align: right;">₱ {{ number_format($data['amount'], 2) }}</td>
+</tr>
+@endforeach
 </tbody>
 </table>
 

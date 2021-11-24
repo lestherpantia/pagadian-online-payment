@@ -51,7 +51,6 @@ class PaymayaCheckoutController extends Controller
             (\App::environment('production') ? 'PRODUCTION' : 'SANDBOX')
         );
 
-
         $sample_reference_number = '000000000000001';
         $total = 0;
 

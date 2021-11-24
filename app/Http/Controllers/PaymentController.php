@@ -444,17 +444,18 @@ class PaymentController extends Controller
                 }
             }
 
-//            $email_details = collect([
-//                'transaction_date' => date('Y-m-d'),
-//                'items' => $bills,
-//                'total' => $amount,
-//                'invoice' => '00000000001234',
-//                'method' => 'gcash',
-//                'transaction_fee' => $service_charge,
-//            ]);
-//
-//            /* send invoice */
-//            Mail::to(Auth::user()->email)->send(new ReceiptMail($email_details));
+            $email_details = collect([
+                'name' => $full_name,
+                'transaction_date' => date('Y-m-d'),
+                'items' => $bills,
+                'total' => $amount,
+                'invoice' => '00000000001234',
+                'method' => 'gcash',
+                'transaction_fee' => $service_charge,
+            ]);
+
+            /* send invoice */
+            Mail::to(Auth::user()->email)->send(new ReceiptMail($email_details));
 
         } catch (\Exception $e) {
             Session::flash('error', $e);

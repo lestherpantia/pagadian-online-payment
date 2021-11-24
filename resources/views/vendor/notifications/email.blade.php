@@ -1,4 +1,5 @@
 @component('mail::message')
+<div style="padding: 20px">
 {{-- Greeting --}}
 @if (! empty($greeting))
 # {{ $greeting }}
@@ -57,6 +58,7 @@
         'actionText' => $actionText,
     ]
 ) <span class="break-all">[{{ $displayableActionUrl }}]({{ $actionUrl }})</span>
+</div>
 @endslot
 @endisset
 @endcomponent
