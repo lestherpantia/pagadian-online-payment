@@ -2995,6 +2995,19 @@ __webpack_require__.r(__webpack_exports__);
       error_handler.join();
       return error_handler;
     },
+    rpuType: function rpuType(value) {
+      if (value === 'L') {
+        return 'LAND';
+      }
+
+      if (value === 'B') {
+        return 'BUILDING';
+      }
+
+      if (value === 'M') {
+        return 'MACHINERY';
+      }
+    },
     formatPrice: function formatPrice(value) {
       var val = (value / 1).toFixed(2).replace(',', '.');
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -3138,6 +3151,7 @@ function _iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Sy
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
+//
 //
 //
 //
@@ -70475,7 +70489,7 @@ var render = function () {
                 _vm._v(" "),
                 _c("td", [_vm._v(_vm._s(item.arp))]),
                 _vm._v(" "),
-                _c("td", [_vm._v(_vm._s(item.rpt_type))]),
+                _c("td", [_vm._v(_vm._s(_vm.rpuType(item.rpt_type)))]),
                 _vm._v(" "),
                 _c("td", [_vm._v(_vm._s(item.brgy_desc))]),
                 _vm._v(" "),
@@ -70784,6 +70798,24 @@ var render = function () {
                 _c(
                   "tbody",
                   [
+                    _vm.rptTableData.length == 0
+                      ? _c("tr", [
+                          _c(
+                            "td",
+                            {
+                              staticClass: "text-center p-2",
+                              staticStyle: { "font-style": "italic" },
+                              attrs: { colspan: "8" },
+                            },
+                            [
+                              _vm._v(
+                                "\n                                    NO PENDING BILLS\n                                "
+                              ),
+                            ]
+                          ),
+                        ])
+                      : _vm._e(),
+                    _vm._v(" "),
                     _vm._l(_vm.rptTableData, function (item, index) {
                       return [
                         _c("tr", [

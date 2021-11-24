@@ -43,7 +43,7 @@
                     <tr v-for="(item, index) in rptTableData">
                         <td>{{ item.pin }}</td>
                         <td>{{ item.arp }}</td>
-                        <td>{{ item.rpt_type }}</td>
+                        <td>{{ rpuType(item.rpt_type) }}</td>
                         <td>{{ item.brgy_desc }}</td>
                         <td><button id="warning" class="btn p-0" v-on:click="deleteRecord(item.id)"><i class="fas fa-trash-alt mr-2"></i></button></td>
                     </tr>
@@ -145,6 +145,20 @@ export default {
             error_handler.join();
 
             return error_handler;
+        },
+
+        rpuType(value) {
+            if(value === 'L') {
+                return 'LAND';
+            }
+
+            if(value === 'B') {
+                return 'BUILDING';
+            }
+
+            if(value === 'M') {
+                return 'MACHINERY';
+            }
         },
 
         formatPrice(value) {

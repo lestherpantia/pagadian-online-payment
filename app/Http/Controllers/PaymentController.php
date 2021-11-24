@@ -67,8 +67,9 @@ class PaymentController extends Controller
             ->leftJoin('rpumaster', 'rpumaster.rpu_num', 'rpubilllne.rpu_num')
             ->leftJoin('rpubillhdr', 'rpubillhdr.bill_num', 'rpubilllne.bill_num')
             ->leftJoin('rpts', 'rpts.rpumaster_id', 'rpumaster.id')
-            ->select('rpubillne.a')
+//            ->select('rpubillne.a')
             ->select('rpts.id', 'rpumaster.pin', 'rpumaster.arp', 'rpumaster.rpt_type', 'rpubilllne.bill_num', 'rpubilllne.ln_amnt', 'rpubilllne.yr1','rpubillhdr.trnx_date')
+            ->where('rpubilllne.ln_amnt', '!=', 0)
             ->where('rpts.user_id', Auth::user()->id)
             ->get();
 
@@ -325,14 +326,13 @@ class PaymentController extends Controller
 
     public function gcash_success(Request $request) {
 
-        try {
-
+        try
+        {
             $srcid = session()->get('gcashsource')->id;
             $srctype = session()->get('gcashsource')->type;
             $amount = session()->get('gcashsource')->amount;
             $service_charge = session()->get('service_charge');
             $bills = session()->get('bills');
-
 
             $payment = Paymongo::payment()
                 ->create([
