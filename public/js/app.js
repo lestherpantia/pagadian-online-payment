@@ -3448,6 +3448,19 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
     Loading: (vue_loading_overlay__WEBPACK_IMPORTED_MODULE_0___default())
   },
   methods: {
+    rpuType: function rpuType(value) {
+      if (value === 'L') {
+        return 'LAND';
+      }
+
+      if (value === 'B') {
+        return 'BUILDING';
+      }
+
+      if (value === 'M') {
+        return 'MACHINERY';
+      }
+    },
     formatPrice: function formatPrice(value) {
       var val = (value / 1).toFixed(2).replace(',', '.');
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -70909,7 +70922,7 @@ var render = function () {
                                   staticClass: "text-left p-2",
                                   staticStyle: { width: "15%" },
                                 },
-                                [_vm._v(_vm._s(data.rpt_type))]
+                                [_vm._v(_vm._s(_vm.rpuType(data.rpt_type)))]
                               ),
                               _vm._v(" "),
                               _c(

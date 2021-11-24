@@ -60,7 +60,7 @@
                                         <td style="width: 15%" class="text-left p-2">{{ data.trnx_date }}</td>
                                         <td style="width: 15%" class="text-left p-2">{{ data.pin }}</td>
                                         <td style="width: 15%" class="text-left p-2">{{ data.arp }}</td>
-                                        <td style="width: 15%" class="text-left p-2">{{ data.rpt_type }}</td>
+                                        <td style="width: 15%" class="text-left p-2">{{ rpuType(data.rpt_type) }}</td>
                                         <td style="width: 15%" class="text-center p-2">{{ data.yr1 }}</td>
                                         <td style="width: 20%" class="text-right p-2">{{ formatPrice(data.ln_amnt) }}</td>
                                     </tr>
@@ -301,6 +301,20 @@ export default {
     },
 
     methods: {
+
+        rpuType(value) {
+            if(value === 'L') {
+                return 'LAND';
+            }
+
+            if(value === 'B') {
+                return 'BUILDING';
+            }
+
+            if(value === 'M') {
+                return 'MACHINERY';
+            }
+        },
 
         formatPrice(value) {
             let val = (value/1).toFixed(2).replace(',', '.')
