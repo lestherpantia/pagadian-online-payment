@@ -24,7 +24,7 @@ class RptController extends Controller
         $rpts = Rpt::leftJoin('rpumaster','rpumaster.id', 'rpts.rpumaster_id')
             ->leftJoin('barangay', 'barangay.brgy_code', 'rpumaster.brgy_code')
             ->where('rpts.user_id', Auth::user()->id)
-            ->select('rpumaster.arp', 'rpumaster.pin', 'barangay.brgy_desc')
+            ->select('rpumaster.arp', 'rpumaster.pin', 'rpumaster.rpt_type', 'barangay.brgy_desc')
             ->get();
 
         $barangay = DB::table('barangay')->select('brgy_code', 'brgy_desc')->orderBy('brgy_desc')->get();

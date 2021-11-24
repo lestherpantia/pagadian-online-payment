@@ -55,6 +55,7 @@
 
 </style>
 
+
 <div style="width: 100%;">
     <img style="width: 100%; height: 200px;" src="{{ asset('image/email-header.png') }}">
 </div>
@@ -63,48 +64,42 @@
 
 <span style="font-size: 20px;">Invoice to: MARK LESTHER PANTIA</span>
 <table class="header-table" style="width: 100%; font-size: 13px">
-    <tr>
-        <th>No: 12345</th>
-    </tr>
-    <tr>
-        <th>Date | Time: {{ $date }}</th>
-    </tr>
-    <tr>
-        <th>Payment Type: {{ strtoupper($trans_data->payment_method) }}</th>
-    </tr>
+<tr>
+{{--    <th>No: {{ $data['invoice'] }}</th>--}}
+</tr>
+<tr>
+{{--    <th>Date | Time: {{ date('m/d/y H:i') }}</th>--}}
+</tr>
+<tr>
+{{--    <th>Payment Type: {{ strtoupper($data['method']) }}</th>--}}
+</tr>
 </table>
 
 <table class="rpt_table">
-    <thead>
-        <tr>
-            <th>BILL NO.</th>
-            <th>PIN</th>
-            <th>ARP</th>
-            <th style="text-align: right;">TOTAL</th>
-        </tr>
-    </thead>
-    <tbody>
-    @foreach($trans_data->rpt as $data)
-        @if($data['amount_to_pay'] != 0)
-            <tr>
-                <td>{{ $data['bill_num'] }}</td>
-                <td>{{ $data['pin'] }}</td>
-                <td>{{ $data['arp'] }}</td>
-                <td style="text-align: right;">₱ {{ number_format($data['amount_to_pay'], 2) }}</td>
-            </tr>
-        @endif
-    @endforeach
-    </tbody>
-    <tfoot>
-        <tr>
-            <th colspan="3" style="text-align: right">TRANSACTION FEE:</th>
-            <th style="text-align: right;">₱ 50.00</th>
-        </tr>
-        <tr>
-            <th colspan="3" style="text-align: right">TOTAL:</th>
-            <th style="text-align: right;">₱ {{ number_format($totals, 2) }}</th>
-        </tr>
-    </tfoot>
+<tfoot>
+<tr>
+<th style="text-align: right">TRANSACTION FEE:</th>
+{{--<th style="text-align: right;">₱ {{ number_format($data['transaction_fee'], 2) }}</th>--}}
+</tr>
+<tr>
+<th style="text-align: right">TOTAL:</th>
+{{--<th style="text-align: right;">₱ {{ number_format($data['total'], 2) }}</th>--}}
+</tr>
+</tfoot>
+<thead>
+<tr>
+<th>BILL NO.</th>
+<th style="text-align: right;">TOTAL</th>
+</tr>
+</thead>
+{{--<tbody>--}}
+{{--@foreach($data['items'] as $data)--}}
+{{--<tr>--}}
+{{--<td>{{ $data['bill_num'] }}</td>--}}
+{{--<td style="text-align: right;">₱ {{ number_format($data['amount'], 2) }}</td>--}}
+{{--</tr>--}}
+{{--@endforeach--}}
+</tbody>
 </table>
 
 Thanks,<br>

@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\URL;
 use Luigel\Paymongo\Facades\Paymongo;
 
 class PaymentController extends Controller
@@ -55,14 +56,6 @@ class PaymentController extends Controller
         ]);
     }
 
-    public function chargable(Request $request) {
-//        $response = Http::accept('application/json')
-//        ->get('hhttps://api.paymongo.com/webhooks/hook_jLGgZCFTbfBerewnWFtzVMS1');
-//
-//
-//        dd($response);
-    }
-
     public function payment_pad(Request $request) {
 
     }
@@ -75,7 +68,7 @@ class PaymentController extends Controller
             ->leftJoin('rpubillhdr', 'rpubillhdr.bill_num', 'rpubilllne.bill_num')
             ->leftJoin('rpts', 'rpts.rpumaster_id', 'rpumaster.id')
             ->select('rpubillne.a')
-            ->select('rpts.id', 'rpumaster.pin', 'rpumaster.arp', 'rpubilllne.bill_num', 'rpubilllne.ln_amnt', 'rpubilllne.yr1','rpubillhdr.trnx_date')
+            ->select('rpts.id', 'rpumaster.pin', 'rpumaster.arp', 'rpumaster.rpt_type', 'rpubilllne.bill_num', 'rpubilllne.ln_amnt', 'rpubilllne.yr1','rpubillhdr.trnx_date')
             ->where('rpts.user_id', Auth::user()->id)
             ->get();
 
@@ -294,13 +287,15 @@ class PaymentController extends Controller
 
     public function gcash(Request $request) {
 
+        $baseUrl = URL::to('/');
+
         $gcashSource = Paymongo::source()->create([
             'type' => 'gcash',
             'amount' => $request->subtotal,
             'currency' => 'PHP',
             'redirect' => [
-                'success' => 'http://localhost/pagadian-online-payment/gcash_success',
-                'failed' => 'http://localhost/pagadian-online-payment/gcash_failed'
+                'success' => $baseUrl . '/gcash_success',
+                'failed' => $baseUrl . '/gcash_failed'
             ],
             'billing' => [
                 'address' => [
@@ -309,7 +304,7 @@ class PaymentController extends Controller
                     'postal_code' => $request->postal_code,
                     'country' => 'PH'
                 ],
-                'name' => $request->fullname,
+                'name' => $request->last_name . ' ' . $request->first_name . ', ' . $request->middle_name,
                 'email' => Auth::user()->email,
                 'phone' => $request->mobile
             ],
@@ -318,11 +313,12 @@ class PaymentController extends Controller
         /* redirect the user to the paymongo checkout for gcash */
         $redirect_url = $gcashSource->redirect['checkout_url'];
 
+
         /* get items */
         $bills = Checkout::where('user_id', Auth::user()->id)->where('paid', false)->select('bill_num', 'amount')->get();
 //        dd($bills);
 
-        session(['gcashsource' => $gcashSource, 'bills' => $bills]);
+        session(['gcashsource' => $gcashSource, 'bills' => $bills, 'service_charge' => $request->servicefee], );
         return response()->json(['checkout' => $redirect_url], 200);
 
     }
@@ -334,6 +330,7 @@ class PaymentController extends Controller
             $srcid = session()->get('gcashsource')->id;
             $srctype = session()->get('gcashsource')->type;
             $amount = session()->get('gcashsource')->amount;
+            $service_charge = session()->get('service_charge');
             $bills = session()->get('bills');
 
 
@@ -350,112 +347,116 @@ class PaymentController extends Controller
                 ]);
 
             $mobile = $payment->billing['phone'];
-            $full_name = $payment->billing['name'];
+            $full_name = strtoupper($payment->billing['name']);
+            $payment_id = $payment->id;
 
 
             foreach($bills as $item)
             {
 
-
                 $update_checkout = Checkout::where('bill_num', $item->bill_num)->where('paid', false)->where('user_id', Auth::user()->id)->first();
-                $update_checkout->paid = true;
-                $update_checkout->payment_date = date('m/d/Y');
-                $update_checkout->save();
 
-
-
-                /* save to treasury database using pagadian_smartserve_database */
-
-                DB::connection('pgsql_2')->raw('LOCK TABLES cashiersetup WRITE');
-                $or_number = DB::connection('pgsql_2')
-                    ->table('cashiersetup')
-                    ->select('next_ornumber')->where('user_id', 'ARNOLD')
-                    ->first();
-
-
-                /* save data to colhdr */
-                DB::connection('pgsql_2')->raw('LOCK TABLES m99 WRITE');
-                $or_code = DB::connection('pgsql_2')
-                    ->table('m99')
-                    ->select('or_code')
-                    ->first();
-
-
-                /* get mp_code */
-                $mp_code = DB::connection('pgsql_2')
-                    ->table('m10')
-                    ->where('online_rpt', true)
-                    ->select('mp_code')
-                    ->first();
-
-
-
-
-                $colhdr = new Colhdr();
-                $colhdr->or_code = $or_code->or_code;
-                $colhdr->trnx_date = date('Y-m-d');
-                $colhdr->full_name = $full_name;
-                $colhdr->or_number = $or_number->next_ornumber;
-                $colhdr->user_id = 'ARNOLD';
-                $colhdr->t_date = date('Y-m-d');
-                $colhdr->t_time = date('h:i');
-                $colhdr->value_date = date('Y-m-d');
-                $colhdr->mobile = $mobile;
-                $colhdr->coll_type = 2;
-                $colhdr->bill_num = $item->bill_num;
-                $colhdr->payor = $full_name;
-                $colhdr->save();
-
-
-
-
-                $collne = new Collne();
-                $collne->or_code = $or_code->or_code;
-                $collne->ln_num= 1;
-                $collne->pay_code = $mp_code->mp_code;
-                $collne->amnt_paid = $item->amount;
-                $collne->save();
-
-
-
-
-
-                $bill_info = DB::table('rpubilllne')->where('bill_num' , $item->bill_num)->get();
-                $ln_num = 1;
-
-
-
-
-                foreach($bill_info as $bill)
+                if($update_checkout != null)
                 {
-                    $collne4 = new Collne4();
-                    $collne4->or_code = $or_code->or_code;
-                    $collne4->ln_num = $ln_num;
-                    $collne4->rpu_num = $bill->rpu_num;
-                    $collne4->yr1 = $bill->yr1;
-                    $collne4->yr2 = $bill->yr2;
-                    $collne4->tax_paid = $bill->tax_amnt;
-                    $collne4->pen_paid = $bill->penalty;
-                    $collne4->bill_num = $bill->bill_num;
-                    $collne4->sef_paid = $bill->sef_amnt;
-                    $collne4->penalty_sef_paid = $bill->penalty_sef;
-                    $collne4->save();
-                    $ln_num++;
+                    $update_checkout->paid = true;
+                    $update_checkout->payment_date = date('m/d/Y');
+                    $update_checkout->transaction_id = $payment_id;
+                    $update_checkout->save();
+
+
+                    /* save to treasury database using pagadian_smartserve_database */
+
+                    DB::connection('pgsql_2')->raw('LOCK TABLES cashiersetup WRITE');
+                    $or_number = DB::connection('pgsql_2')
+                        ->table('cashiersetup')
+                        ->select('next_ornumber')->where('user_id', 'ARNOLD')
+                        ->first();
+
+
+                    /* save data to colhdr */
+                    DB::connection('pgsql_2')->raw('LOCK TABLES m99 WRITE');
+                    $or_code = DB::connection('pgsql_2')
+                        ->table('m99')
+                        ->select('or_code')
+                        ->first();
+
+
+                    /* get mp_code */
+                    $mp_code = DB::connection('pgsql_2')
+                        ->table('m10')
+                        ->where('online_rpt', true)
+                        ->where('mp_desc', 'GCASH')
+                        ->select('mp_code')
+                        ->first();
+
+
+                    $colhdr = new Colhdr();
+                    $colhdr->or_code = $or_code->or_code;
+                    $colhdr->trnx_date = date('Y-m-d');
+                    $colhdr->full_name = $full_name;
+                    $colhdr->or_number = $or_number->next_ornumber;
+                    $colhdr->user_id = 'ARNOLD';
+                    $colhdr->t_date = date('Y-m-d');
+                    $colhdr->t_time = date('h:i');
+                    $colhdr->value_date = date('Y-m-d');
+                    $colhdr->mobile = $mobile;
+                    $colhdr->coll_type = 2;
+                    $colhdr->bill_num = $item->bill_num;
+                    $colhdr->payor = $full_name;
+                    $colhdr->save();
+
+
+                    $collne = new Collne();
+                    $collne->or_code = $or_code->or_code;
+                    $collne->ln_num= 1;
+                    $collne->pay_code = $mp_code->mp_code;
+                    $collne->amnt_paid = $item->amount;
+                    $collne->save();
+
+
+                    $bill_info = DB::table('rpubilllne')->where('bill_num' , $item->bill_num)->get();
+                    $ln_num = 1;
+
+
+                    foreach($bill_info as $bill)
+                    {
+                        $collne4 = new Collne4();
+                        $collne4->or_code = $or_code->or_code;
+                        $collne4->ln_num = $ln_num;
+                        $collne4->rpu_num = $bill->rpu_num;
+                        $collne4->yr1 = $bill->yr1;
+                        $collne4->yr2 = $bill->yr2;
+                        $collne4->tax_paid = $bill->tax_amnt;
+                        $collne4->pen_paid = $bill->penalty;
+                        $collne4->bill_num = $bill->bill_num;
+                        $collne4->sef_paid = $bill->sef_amnt;
+                        $collne4->penalty_sef_paid = $bill->penalty_sef;
+                        $collne4->save();
+                        $ln_num++;
+                    }
+
+                    $new_or_code = str_pad($or_code->or_code + 1, 8, 0, STR_PAD_LEFT);
+                    $new_or_number = str_pad($or_number->next_ornumber + 1, 15, 0, STR_PAD_LEFT);
+
+
+                    DB::connection('pgsql_2')->table('m99')->update(['or_code' => $new_or_code]);
+                    DB::connection('pgsql_2')->table('cashiersetup')->where('user_id', 'ARNOLD')->update(['next_ornumber' => $new_or_number]);
                 }
-
-
-
-                $new_or_code = str_pad($or_code->or_code + 1, 8, 0, STR_PAD_LEFT);
-                $new_or_number = str_pad($or_number->next_ornumber + 1, 15, 0, STR_PAD_LEFT);
-
-
-
-                DB::connection('pgsql_2')->table('m99')->update(['or_code' => $new_or_code]);
-                DB::connection('pgsql_2')->table('cashiersetup')->where('user_id', 'ARNOLD')->update(['next_ornumber' => $new_or_number]);
-
             }
 
-        } catch (\Throwable $e) {
+//            $email_details = collect([
+//                'transaction_date' => date('Y-m-d'),
+//                'items' => $bills,
+//                'total' => $amount,
+//                'invoice' => '00000000001234',
+//                'method' => 'gcash',
+//                'transaction_fee' => $service_charge,
+//            ]);
+//
+//            /* send invoice */
+//            Mail::to(Auth::user()->email)->send(new ReceiptMail($email_details));
+
+        } catch (\Exception $e) {
             Session::flash('error', $e);
             return redirect()->to('/');
         }

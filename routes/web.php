@@ -78,8 +78,6 @@ Route::get('test', [PaymentController::class, 'test']);
 //Route::get('paymongo_webhook', [PaymentController::class, 'webhook']);
 Route::get('webhook/chargable', [PaymentController::class, 'chargable']);
 
-
-
 /* rpt */
 Route::get('rpt', [RptController::class, 'index']);
 
@@ -93,4 +91,5 @@ Route::post('paymaya_checkout', [PaymayaCheckoutController::class, 'redirectToPa
 Route::get('paymaya_success', [PaymayaCheckoutController::class, 'success']);
 Route::get('paymaya_failed', [PaymayaCheckoutController::class, 'failed']);
 Route::get('success', [PaymayaCheckoutController::class, 'success']);
+Route::get('paymaya/success', [PaymayaCheckoutController::class, 'chargable']);
 

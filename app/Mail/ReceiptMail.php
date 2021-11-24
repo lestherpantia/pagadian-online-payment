@@ -6,6 +6,8 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ReceiptMail extends Mailable
 {
@@ -18,12 +20,10 @@ class ReceiptMail extends Mailable
      */
 
     public $data;
-    public $date;
 
-    public function __construct($data, $date)
+    public function __construct($data)
     {
         $this->data = $data;
-        $this->date = $date;
     }
 
 
@@ -34,13 +34,8 @@ class ReceiptMail extends Mailable
      */
     public function build()
     {
-        $totals = 0;
+       /* get rpt details per bill number */
 
-        foreach($this->data['rpt'] as $rpt)
-        {
-            $totals += $rpt['amount_to_pay'];
-        }
-
-        return $this->markdown('emails.receipt')->with(['trans_data' => $this->data, 'totals' => $totals, 'date' => $this->date]);
+        return $this->markdown('emails.receipt')->with(['data' => $this->data]);
     }
 }

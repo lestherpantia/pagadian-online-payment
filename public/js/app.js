@@ -2523,6 +2523,23 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 // Import component
 
 
@@ -2555,6 +2572,20 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
       var val = (value / 1).toFixed(2).replace(',', '.');
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     },
+    checkoutServiceFees: function checkoutServiceFees() {
+      if (this.paymentMethod === 'paymaya') {
+        /* 3% + 10pesos service charge in paymaya */
+        this.serviceFee = this.subTotal * 0.03;
+        this.serviceFee = this.serviceFee + 10;
+      }
+
+      if (this.paymentMethod === 'gcash') {
+        /* 2.5% service charge in gcash */
+        this.serviceFee = this.subTotal * 0.025;
+      }
+
+      this.grandTotal = this.subTotal + this.serviceFee;
+    },
     computeTotals: function computeTotals(index) {
       var amountArr = [];
       Object.entries(this.rptTableData[index]).forEach(function (_ref) {
@@ -2575,9 +2606,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
       this.isLoading = true;
       axios.get('checkout/initial_data').then(function (response) {
         _this.rptTableData = response.data.checkout;
-        _this.subTotal = response.data.sub_total;
-        _this.serviceFee = response.data.service_charge;
-        _this.grandTotal = response.data.grand_total;
+        _this.subTotal = response.data.sub_total; // this.serviceFee = response.data.service_charge;
       })["finally"](function () {
         return _this.isLoading = false;
       });
@@ -2743,7 +2772,9 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
       axios.post(route, {
         rpt: this.rptTableData,
         // payment_method: this.paymentMethod,
-        fullname: this.payment.fullname,
+        first_name: this.payment.first_name,
+        last_name: this.payment.last_name,
+        middle_name: this.payment.middle_name,
         address: this.payment.address,
         city: this.payment.city,
         state: this.payment.state,
@@ -2751,13 +2782,8 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
         subtotal: this.subTotal,
         servicefee: this.serviceFee,
         grandtotal: this.grandTotal,
-        mobile: this.payment.mobile // card_no: this.payment.card_no,
-        // exp_date: this.payment.exp_date,
-        // cvc: this.payment.cvc
-
+        mobile: this.payment.mobile
       }).then(function (response) {
-        /// setTimeout(function () { window.location.href = 'home'; }, 1500);
-        //this.messageBox('success', 'Transaction Success', response.data.message, 'Finish');
         window.location.href = response.data.checkout;
       })["catch"](function (error) {
         _this4.messageBox('error', 'Failed', error.response.data.errors, 'Okay');
@@ -2832,6 +2858,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var sweetalert2_dist_sweetalert2_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(sweetalert2_dist_sweetalert2_js__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var vue_loading_overlay_dist_vue_loading_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vue-loading-overlay/dist/vue-loading.css */ "./node_modules/vue-loading-overlay/dist/vue-loading.css");
 /* harmony import */ var sweetalert2_src_sweetalert2_scss__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! sweetalert2/src/sweetalert2.scss */ "./node_modules/sweetalert2/src/sweetalert2.scss");
+//
+//
 //
 //
 //
@@ -3110,6 +3138,8 @@ function _iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Sy
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
+//
+//
 //
 //
 //
@@ -3708,8 +3738,8 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
  * for events that are broadcast by Laravel. Echo and event broadcasting
  * allows your team to easily build robust real-time web applications.
  */
-
-window.axios.defaults.baseURL = 'http://localhost/pagadian-online-payment'; // import Echo from 'laravel-echo';
+// window.axios.defaults.baseURL = 'http://localhost/pagadian-online-payment';
+// import Echo from 'laravel-echo';
 // window.Pusher = require('pusher-js');
 // window.Echo = new Echo({
 //     broadcaster: 'pusher',
@@ -8151,7 +8181,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n#main-container[data-v-ed2d7008] {\n    height: 100vh;\n}\n.card[data-v-ed2d7008] {\n    /*max-height: 600px;*/\n}\n.card-header .project-title[data-v-ed2d7008] {\n    font-weight: bold;\n}\n.card-header .username[data-v-ed2d7008] {\n    font-size: 15px;\n}\n#rpt-table[data-v-ed2d7008] {\n    margin-top: 10px;\n    width: 100%;\n    font-size: 15px;\n}\n#rpt-table tbody tr[data-v-ed2d7008]:nth-child(odd) {\n    background: whitesmoke;\n}\n\n/*#rpt-table thead {*/\n/*    !*text-align: center;*!*/\n/*}*/\n\n/*#rpt-table thead tr {*/\n/*    border: 1px solid #dcdde1;*/\n/*}*/\n\n/*#rpt-table thead tr th {*/\n/*    text-align: center;*/\n/*    font-size: 15px;*/\n/*    padding: 10px 5px;*/\n/*    color: #636e72;*/\n/*}*/\n\n/*#rpt-table tbody tr:nth-child(odd) {*/\n/*    background: whitesmoke;*/\n/*}*/\n\n/*#rpt-table tbody tr td {*/\n/*    text-align: center;*/\n/*    font-size: 12px;*/\n/*    padding: 5px 10px;*/\n/*    border-bottom: 1px solid #dcdde1;*/\n/*}*/\n\n/*#rpt-table tfoot tr th {*/\n/*    border-top: 3px dashed #dfe6e9;*/\n/*    padding: 10px;*/\n/*    font-size: 18px;*/\n/*    font-weight: bold;*/\n/*    color:#636e72;*/\n/*}*/\n#return[data-v-ed2d7008], #checkout[data-v-ed2d7008] {\n    padding: 10px;\n    font-size: 13px;\n    border: none;\n    border-radius: 5px;\n    background: #01AA4F;\n    color: #fff;\n    font-weight: 600;\n}\n#return[data-v-ed2d7008]:hover, #checkout[data-v-ed2d7008]:hover {\n    background: #00D161;\n}\n#payment-button[data-v-ed2d7008] {\n    background: #1e90ff;\n}\n#warning[data-v-ed2d7008] {\n    font-size: 18px;\n    color: red;\n    text-align: center;\n}\n#checkbox[data-v-ed2d7008] {\n    width: 20px;\n    height: 20px;\n}\n#pin[data-v-ed2d7008], #arp[data-v-ed2d7008] {\n    font-weight: bold;\n    text-align: center;\n    text-transform: uppercase;\n}\n.payment-container[data-v-ed2d7008] {\n    background: white;\n    border-radius: 4px;\n    padding: 5px;\n}\n\n/*.logo {*/\n/*    width: 100%;*/\n/*}*/\n.modal-header img[data-v-ed2d7008] {\n    width: 200px;\n}\nlabel[data-v-ed2d7008], select[data-v-ed2d7008], input[data-v-ed2d7008] {\n    font-size: 12px;\n}\ninput[data-v-ed2d7008] {\n    text-transform: uppercase;\n}\n.modal-footer button[data-v-ed2d7008] {\n    font-size: 15px;\n}\n#card-no[data-v-ed2d7008], #exp[data-v-ed2d7008], #cvc[data-v-ed2d7008] {\n    text-align: center;\n}\n.card-info[data-v-ed2d7008] {\n    position: relative;\n}\n.card-info .icon[data-v-ed2d7008], .err[data-v-ed2d7008] {\n    position: absolute;\n    top: 42px;\n}\n.card-info .icon[data-v-ed2d7008] {\n    left: 20px;\n    color: #636e72;\n}\n.card-info .err[data-v-ed2d7008] {\n    display: none;\n    right: 20px;\n    color: red;\n    opacity: 0.5;\n}\n.line[data-v-ed2d7008] {\n    width: 100%;\n    background: #b2bec3;\n    padding: 1px;\n    margin: 20px 0 10px 0;\n}\n.transact-detail-view label[data-v-ed2d7008] {\n    line-height: 1;\n    font-size: 15px;\n}\n.alert-msg[data-v-ed2d7008] {\n    width: 100%;\n    padding: 10px 10px;\n    border-radius: 5px;\n    background: #fab1a0;\n    border: 1px solid #fab1a0;\n    color: #d63031;\n    font-size: 12px;\n    display: none;\n}\n.alert-msg ul[data-v-ed2d7008] {\n    margin: 0;\n    padding-left: 20px;\n}\n.invalid[data-v-ed2d7008] {\n    border: 1px solid #ff7675;\n}\n.err_amount[data-v-ed2d7008] {\n    font-size: 10px;\n    color: red;\n}\n.payment-preview[data-v-ed2d7008] {\n    /*background: #f1f2f6;*/\n    padding: 20px;\n    border: 1px solid #ced6e0;\n    border-radius: 5px;\n    font-size: 13px;\n}\n\n\n/*.payment-details tr th {*/\n/*    font-weight: normal;*/\n/*}*/\n\n/*.payment-details tr td {*/\n/*    text-transform: uppercase;*/\n/*}*/\n\n/*.payment-details tr th, td {*/\n/*    padding: 5px 0;*/\n/*}*/\n.payment-details[data-v-ed2d7008] {\n    display: none;\n}\n.rpt-breakdown[data-v-ed2d7008] {\n    margin-top: 10px;\n    width: 100%;\n    border-radius: 4px;\n    font-size: 12px;\n}\n.rpt-breakdown thead[data-v-ed2d7008] {\n    /*background: #dfe4ea;*/\n    color: #000;\n}\n.rpt-breakdown thead tr th[data-v-ed2d7008] {\n    padding: 5px 10px;\n}\n.rpt-breakdown tbody tr td[data-v-ed2d7008] {\n    /*border-bottom: 1px solid #000;*/\n    font-size: 12px;\n    padding: 5px;\n}\n.rpt-breakdown tfoot tr th[data-v-ed2d7008] {\n    border-top: 1px solid #000;\n    padding: 5px;\n}\n#proceed-payment[data-v-ed2d7008], #cancel[data-v-ed2d7008] {\n    font-size: 13px;\n    font-weight: bold;\n}\n#proceed-payment[data-v-ed2d7008] {\n    color: #fff;\n    background: dodgerblue;\n}\n#cancel[data-v-ed2d7008] {\n    color: #fff;\n    background: #d63031;\n}\n\n/*.payment-breakdown {*/\n\n/*}*/\n\n\n/*.payment-breakdown table {*/\n/*    position: relative;*/\n/*    margin: 0;*/\n/*    overflow: auto;*/\n/*}*/\n\n/*.payment-breakdown table {*/\n/*    border-collapse: collapse;*/\n/*}*/\n\n/*.payment-breakdown table{*/\n/*    position: sticky;*/\n/*    background: whitesmoke;*/\n/*    top: 0;*/\n/*    z-index: 1;*/\n/*}*/\n\n/*.payment-breakdown table tbody tr td {*/\n\n/*}*/\n\n/*.breakdown-table table tbody tr td {*/\n/*    padding: 5px ;*/\n/*}*/\n\n\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n#main-container[data-v-ed2d7008] {\n    height: 100vh;\n}\n.card[data-v-ed2d7008] {\n    /*max-height: 600px;*/\n}\n.card-header .project-title[data-v-ed2d7008] {\n    font-weight: bold;\n}\n.card-header .username[data-v-ed2d7008] {\n    font-size: 15px;\n}\n#rpt-table[data-v-ed2d7008] {\n    margin-top: 10px;\n    width: 100%;\n    font-size: 15px;\n}\n#rpt-table tbody tr[data-v-ed2d7008]:nth-child(odd) {\n    background: whitesmoke;\n}\n\n/*#rpt-table thead {*/\n/*    !*text-align: center;*!*/\n/*}*/\n\n/*#rpt-table thead tr {*/\n/*    border: 1px solid #dcdde1;*/\n/*}*/\n\n/*#rpt-table thead tr th {*/\n/*    text-align: center;*/\n/*    font-size: 15px;*/\n/*    padding: 10px 5px;*/\n/*    color: #636e72;*/\n/*}*/\n\n/*#rpt-table tbody tr:nth-child(odd) {*/\n/*    background: whitesmoke;*/\n/*}*/\n\n/*#rpt-table tbody tr td {*/\n/*    text-align: center;*/\n/*    font-size: 12px;*/\n/*    padding: 5px 10px;*/\n/*    border-bottom: 1px solid #dcdde1;*/\n/*}*/\n\n/*#rpt-table tfoot tr th {*/\n/*    border-top: 3px dashed #dfe6e9;*/\n/*    padding: 10px;*/\n/*    font-size: 18px;*/\n/*    font-weight: bold;*/\n/*    color:#636e72;*/\n/*}*/\n#return[data-v-ed2d7008], #checkout[data-v-ed2d7008] {\n    padding: 10px;\n    font-size: 13px;\n    border: none;\n    border-radius: 5px;\n    background: #01AA4F;\n    color: #fff;\n    font-weight: 600;\n}\n#return[data-v-ed2d7008]:hover, #checkout[data-v-ed2d7008]:hover {\n    background: #00D161;\n}\n#payment-button[data-v-ed2d7008] {\n    background: #1e90ff;\n}\n#warning[data-v-ed2d7008] {\n    font-size: 18px;\n    color: red;\n    text-align: center;\n}\n#checkbox[data-v-ed2d7008] {\n    width: 20px;\n    height: 20px;\n}\n#pin[data-v-ed2d7008], #arp[data-v-ed2d7008] {\n    font-weight: bold;\n    text-align: center;\n    text-transform: uppercase;\n}\n.payment-container[data-v-ed2d7008] {\n    background: white;\n    border-radius: 4px;\n    padding: 5px;\n}\n\n/*.logo {*/\n/*    width: 100%;*/\n/*}*/\n.modal-header img[data-v-ed2d7008] {\n    width: 200px;\n}\nlabel[data-v-ed2d7008], select[data-v-ed2d7008], input[data-v-ed2d7008] {\n    font-size: 12px;\n}\ninput[data-v-ed2d7008] {\n    text-transform: uppercase;\n}\n.modal-footer button[data-v-ed2d7008] {\n    font-size: 15px;\n}\n#card-no[data-v-ed2d7008], #exp[data-v-ed2d7008], #cvc[data-v-ed2d7008] {\n    text-align: center;\n}\n.card-info[data-v-ed2d7008] {\n    position: relative;\n}\n.card-info .icon[data-v-ed2d7008], .err[data-v-ed2d7008] {\n    position: absolute;\n    top: 42px;\n}\n.card-info .icon[data-v-ed2d7008] {\n    left: 20px;\n    color: #636e72;\n}\n.card-info .err[data-v-ed2d7008] {\n    display: none;\n    right: 20px;\n    color: red;\n    opacity: 0.5;\n}\n.line[data-v-ed2d7008] {\n    width: 100%;\n    background: #b2bec3;\n    padding: 1px;\n    margin: 20px 0 10px 0;\n}\n.transact-detail-view label[data-v-ed2d7008] {\n    line-height: 1;\n    font-size: 15px;\n}\n.alert-msg[data-v-ed2d7008] {\n    width: 100%;\n    padding: 10px 10px;\n    border-radius: 5px;\n    background: #fab1a0;\n    border: 1px solid #fab1a0;\n    color: #d63031;\n    font-size: 12px;\n    display: none;\n}\n.alert-msg ul[data-v-ed2d7008] {\n    margin: 0;\n    padding-left: 20px;\n}\n.invalid[data-v-ed2d7008] {\n    border: 1px solid #ff7675;\n}\n.err_amount[data-v-ed2d7008] {\n    font-size: 10px;\n    color: red;\n}\n.payment-preview[data-v-ed2d7008] {\n    /*background: #f1f2f6;*/\n    padding: 20px;\n    border: 1px solid #ced6e0;\n    border-radius: 5px;\n    font-size: 13px;\n}\n\n\n/*.payment-details tr th {*/\n/*    font-weight: normal;*/\n/*}*/\n\n/*.payment-details tr td {*/\n/*    text-transform: uppercase;*/\n/*}*/\n\n/*.payment-details tr th, td {*/\n/*    padding: 5px 0;*/\n/*}*/\n.payment-details[data-v-ed2d7008] {\n    display: none;\n}\n.rpt-breakdown[data-v-ed2d7008] {\n    margin-top: 10px;\n    width: 100%;\n    border-radius: 4px;\n    font-size: 12px;\n}\n.rpt-breakdown thead[data-v-ed2d7008] {\n    /*background: #dfe4ea;*/\n    color: #000;\n}\n.rpt-breakdown thead tr th[data-v-ed2d7008] {\n    padding: 5px 10px;\n}\n.rpt-breakdown tbody tr td[data-v-ed2d7008] {\n    /*border-bottom: 1px solid #000;*/\n    font-size: 12px;\n    padding: 5px;\n}\n.rpt-breakdown tfoot tr th[data-v-ed2d7008] {\n    border-top: 1px solid #000;\n    padding: 5px;\n}\n#proceed-payment[data-v-ed2d7008], #cancel[data-v-ed2d7008] {\n    font-size: 13px;\n    font-weight: bold;\n}\n#proceed-payment[data-v-ed2d7008] {\n    color: #fff;\n    background: dodgerblue;\n}\n#cancel[data-v-ed2d7008] {\n    color: #2d3436;\n    background: #b2bec3;\n}\n\n/*.payment-breakdown {*/\n\n/*}*/\n\n\n/*.payment-breakdown table {*/\n/*    position: relative;*/\n/*    margin: 0;*/\n/*    overflow: auto;*/\n/*}*/\n\n/*.payment-breakdown table {*/\n/*    border-collapse: collapse;*/\n/*}*/\n\n/*.payment-breakdown table{*/\n/*    position: sticky;*/\n/*    background: whitesmoke;*/\n/*    top: 0;*/\n/*    z-index: 1;*/\n/*}*/\n\n/*.payment-breakdown table tbody tr td {*/\n\n/*}*/\n\n/*.breakdown-table table tbody tr td {*/\n/*    padding: 5px ;*/\n/*}*/\n\n\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -69750,9 +69780,12 @@ var render = function () {
                           checked: _vm._q(_vm.paymentMethod, "paymaya"),
                         },
                         on: {
-                          change: function ($event) {
-                            _vm.paymentMethod = "paymaya"
-                          },
+                          change: [
+                            function ($event) {
+                              _vm.paymentMethod = "paymaya"
+                            },
+                            _vm.checkoutServiceFees,
+                          ],
                         },
                       }),
                     ]
@@ -69783,9 +69816,12 @@ var render = function () {
                           checked: _vm._q(_vm.paymentMethod, "gcash"),
                         },
                         on: {
-                          change: function ($event) {
-                            _vm.paymentMethod = "gcash"
-                          },
+                          change: [
+                            function ($event) {
+                              _vm.paymentMethod = "gcash"
+                            },
+                            _vm.checkoutServiceFees,
+                          ],
                         },
                       }),
                     ]
@@ -69810,22 +69846,24 @@ var render = function () {
                   _vm._v(" "),
                   _c("div", { staticClass: "personal-info" }, [
                     _c("div", { staticClass: "row" }, [
-                      _c("div", { staticClass: "card-info col-12" }, [
-                        _c("label", [_vm._v("Card Holder")]),
+                      _vm._m(4),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "card-info col-4" }, [
+                        _c("label", [_vm._v("Last name")]),
                         _vm._v(" "),
                         _c("input", {
                           directives: [
                             {
                               name: "model",
                               rawName: "v-model",
-                              value: _vm.payment.fullname,
-                              expression: "payment.fullname",
+                              value: _vm.payment.last_name,
+                              expression: "payment.last_name",
                             },
                           ],
                           staticClass: "form-control",
                           staticStyle: { "padding-left": "40px" },
-                          attrs: { id: "fullname", type: "text" },
-                          domProps: { value: _vm.payment.fullname },
+                          attrs: { id: "last_name", type: "text" },
+                          domProps: { value: _vm.payment.last_name },
                           on: {
                             input: function ($event) {
                               if ($event.target.composing) {
@@ -69833,7 +69871,81 @@ var render = function () {
                               }
                               _vm.$set(
                                 _vm.payment,
-                                "fullname",
+                                "last_name",
+                                $event.target.value
+                              )
+                            },
+                          },
+                        }),
+                        _vm._v(" "),
+                        _c("i", { staticClass: "icon fas fa-user" }),
+                        _vm._v(" "),
+                        _c("i", {
+                          staticClass: "err fas fa-exclamation-circle",
+                        }),
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "card-info col-4" }, [
+                        _c("label", [_vm._v("First name")]),
+                        _vm._v(" "),
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.payment.first_name,
+                              expression: "payment.first_name",
+                            },
+                          ],
+                          staticClass: "form-control",
+                          staticStyle: { "padding-left": "40px" },
+                          attrs: { id: "first_name", type: "text" },
+                          domProps: { value: _vm.payment.first_name },
+                          on: {
+                            input: function ($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.$set(
+                                _vm.payment,
+                                "first_name",
+                                $event.target.value
+                              )
+                            },
+                          },
+                        }),
+                        _vm._v(" "),
+                        _c("i", { staticClass: "icon fas fa-user" }),
+                        _vm._v(" "),
+                        _c("i", {
+                          staticClass: "err fas fa-exclamation-circle",
+                        }),
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "card-info col-4" }, [
+                        _c("label", [_vm._v("Middle name")]),
+                        _vm._v(" "),
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.payment.middle_name,
+                              expression: "payment.middle_name",
+                            },
+                          ],
+                          staticClass: "form-control",
+                          staticStyle: { "padding-left": "40px" },
+                          attrs: { id: "middle_name", type: "text" },
+                          domProps: { value: _vm.payment.middle_name },
+                          on: {
+                            input: function ($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.$set(
+                                _vm.payment,
+                                "middle_name",
                                 $event.target.value
                               )
                             },
@@ -70049,7 +70161,7 @@ var render = function () {
                         staticStyle: { width: "100%", "font-size": "12px" },
                       },
                       [
-                        _vm._m(4),
+                        _vm._m(5),
                         _vm._v(" "),
                         _c(
                           "tbody",
@@ -70144,8 +70256,10 @@ var render = function () {
                             on: { click: _vm.cancelPayment },
                           },
                           [
-                            _c("i", { staticClass: "fas fa-times mr-2" }),
-                            _vm._v("Cancel Payment"),
+                            _c("i", {
+                              staticClass: "fas fa-chevron-left mr-2",
+                            }),
+                            _vm._v("Back"),
                           ]
                         ),
                       ]),
@@ -70210,6 +70324,14 @@ var staticRenderFns = [
       { staticStyle: { margin: "0 10px 0 0" }, attrs: { for: "gcash" } },
       [_c("img", { attrs: { src: "public/image/gcash_btn.png" } })]
     )
+  },
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "card-info col-12" }, [
+      _c("label", [_vm._v("Card Holder")]),
+    ])
   },
   function () {
     var _vm = this
@@ -70347,6 +70469,8 @@ var render = function () {
                 _c("td", [_vm._v(_vm._s(item.pin))]),
                 _vm._v(" "),
                 _c("td", [_vm._v(_vm._s(item.arp))]),
+                _vm._v(" "),
+                _c("td", [_vm._v(_vm._s(item.rpt_type))]),
                 _vm._v(" "),
                 _c("td", [_vm._v(_vm._s(item.brgy_desc))]),
                 _vm._v(" "),
@@ -70550,6 +70674,8 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", { staticStyle: { width: "25%" } }, [_vm._v("ARP")]),
         _vm._v(" "),
+        _c("th", { staticStyle: { width: "25%" } }, [_vm._v("TYPE")]),
+        _vm._v(" "),
         _c("th", { staticStyle: { width: "25%" } }, [_vm._v("BARANGAY")]),
         _vm._v(" "),
         _c("th", { staticStyle: { width: "25%" } }),
@@ -70698,7 +70824,7 @@ var render = function () {
                                 width: "15%",
                                 "vertical-align": "top",
                               },
-                              attrs: { colspan: "6" },
+                              attrs: { colspan: "7" },
                             },
                             [_c("b", [_vm._v(_vm._s(index))])]
                           ),
@@ -70738,6 +70864,15 @@ var render = function () {
                                   staticStyle: { width: "15%" },
                                 },
                                 [_vm._v(_vm._s(data.arp))]
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "td",
+                                {
+                                  staticClass: "text-left p-2",
+                                  staticStyle: { width: "15%" },
+                                },
+                                [_vm._v(_vm._s(data.rpt_type))]
                               ),
                               _vm._v(" "),
                               _c(
@@ -71242,6 +71377,8 @@ var staticRenderFns = [
           _vm._v("ARP"),
         ]),
         _vm._v(" "),
+        _c("th", { staticStyle: { width: "15%" } }, [_vm._v("TYPE")]),
+        _vm._v(" "),
         _c(
           "th",
           { staticClass: "p-2 text-center", staticStyle: { width: "15%" } },
@@ -71265,7 +71402,7 @@ var staticRenderFns = [
       {
         staticClass: "text-right p-2",
         staticStyle: { width: "15%", "vertical-align": "top" },
-        attrs: { colspan: "6" },
+        attrs: { colspan: "7" },
       },
       [_c("b", [_vm._v("TOTAL :")])]
     )

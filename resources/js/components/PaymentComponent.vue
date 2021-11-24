@@ -31,6 +31,7 @@
                                 <th style="width: 15%" class="p-2">BILL DATE</th>
                                 <th style="width: 15%" class="p-2">PIN</th>
                                 <th style="width: 15%" class="p-2">ARP</th>
+                                <th style="width: 15%">TYPE</th>
                                 <th style="width: 15%" class="p-2 text-center">YEAR</th>
                                 <th style="width: 20%" class="p-2 text-center">BALANCE</th>
     <!--                            <th style="width: 20%" class="text-center">PAYMENT</th>-->
@@ -43,7 +44,7 @@
                                         <input v-if="item[0].w_checkout === true" checked="checked" id="checkbox" type="checkbox" v-on:change="checkPayment(index, $event)">
                                         <input v-else id="checkbox" type="checkbox" v-on:change="checkPayment(index, $event)">
                                     </td>
-                                    <td style="width: 15%; vertical-align: top" class="text-left p-2" colspan="6">
+                                    <td style="width: 15%; vertical-align: top" class="text-left p-2" colspan="7">
                                         <b>{{ index }}</b>
                                     </td>
                                 </tr>
@@ -53,12 +54,13 @@
                                         <td style="width: 15%" class="text-left p-2">{{ data.trnx_date }}</td>
                                         <td style="width: 15%" class="text-left p-2">{{ data.pin }}</td>
                                         <td style="width: 15%" class="text-left p-2">{{ data.arp }}</td>
+                                        <td style="width: 15%" class="text-left p-2">{{ data.rpt_type }}</td>
                                         <td style="width: 15%" class="text-center p-2">{{ data.yr1 }}</td>
                                         <td style="width: 20%" class="text-right p-2">{{ formatPrice(data.ln_amnt) }}</td>
                                     </tr>
                                 </template>
                                 <tr class="border-bottom">
-                                    <td style="width: 15%; vertical-align: top" class="text-right p-2" colspan="6">
+                                    <td style="width: 15%; vertical-align: top" class="text-right p-2" colspan="7">
                                         <b>TOTAL :</b>
                                     </td>
                                     <td style="width: 15%; vertical-align: top" class="text-right p-2" >

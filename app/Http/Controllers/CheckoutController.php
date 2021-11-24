@@ -27,15 +27,15 @@ class CheckoutController extends Controller
             ->get();
 
         $sub_total = 0;
-        $paymaya_service_charge = 0.03;
+//        $paymaya_service_charge = 0.03;
         $service_charge = 0;
         $grand_total = 0;
 
         foreach($checkout as $data) {
             $sub_total += $data->amount;
         }
-
-        $service_charge = ($paymaya_service_charge * $sub_total) + 10;
+//
+//        $service_charge = ($paymaya_service_charge * $sub_total) + 10;
 
         $grand_total = $sub_total + $service_charge;
 

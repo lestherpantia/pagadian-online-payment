@@ -33,6 +33,7 @@
                     <tr>
                         <th style="width: 25%">PIN</th>
                         <th style="width: 25%">ARP</th>
+                        <th style="width: 25%">TYPE</th>
                         <th style="width: 25%">BARANGAY</th>
                         <th style="width: 25%"></th>
                     </tr>
@@ -42,6 +43,7 @@
                     <tr v-for="(item, index) in rptTableData">
                         <td>{{ item.pin }}</td>
                         <td>{{ item.arp }}</td>
+                        <td>{{ item.rpt_type }}</td>
                         <td>{{ item.brgy_desc }}</td>
                         <td><button id="warning" class="btn p-0" v-on:click="deleteRecord(item.id)"><i class="fas fa-trash-alt mr-2"></i></button></td>
                     </tr>

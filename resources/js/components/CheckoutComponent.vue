@@ -31,12 +31,12 @@
                         <div class="col-6 d-flex justify-content-end align-items-center">
                             <div class="p-2 m-1 d-inline-flex align-items-center">
                                 <label for="paymaya" style="margin: 0 10px 0 0"><img src="public/image/paymaya_btn.png"></label>
-                                <input name="payment_type" type="radio" id="paymaya" value="paymaya" v-model="paymentMethod">
+                                <input name="payment_type" type="radio" id="paymaya" value="paymaya" v-model="paymentMethod" v-on:change="checkoutServiceFees">
                             </div>
 
                             <div class="p-2 d-inline-flex align-items-center">
                                 <label for="gcash" style="margin: 0 10px 0 0"><img src="public/image/gcash_btn.png"></label>
-                                <input name="payment_type" type="radio" id="gcash" value="gcash" v-model="paymentMethod">
+                                <input name="payment_type" type="radio" id="gcash" value="gcash" v-model="paymentMethod" v-on:change="checkoutServiceFees">
                             </div>
                         </div>
                     </div>
@@ -57,7 +57,24 @@
                                     <div class="row">
                                         <div class="card-info col-12">
                                             <label>Card Holder</label>
-                                            <input id="fullname" type="text" class="form-control" style="padding-left: 40px;" v-model="payment.fullname">
+                                        </div>
+                                        <div class="card-info col-4">
+                                            <label>Last name</label>
+                                            <input id="last_name" type="text" class="form-control" style="padding-left: 40px;" v-model="payment.last_name">
+                                            <i class="icon fas fa-user"></i>
+                                            <i class="err fas fa-exclamation-circle"></i>
+                                        </div>
+
+                                        <div class="card-info col-4">
+                                            <label>First name</label>
+                                            <input id="first_name" type="text" class="form-control" style="padding-left: 40px;" v-model="payment.first_name">
+                                            <i class="icon fas fa-user"></i>
+                                            <i class="err fas fa-exclamation-circle"></i>
+                                        </div>
+
+                                        <div class="card-info col-4">
+                                            <label>Middle name</label>
+                                            <input id="middle_name" type="text" class="form-control" style="padding-left: 40px;" v-model="payment.middle_name">
                                             <i class="icon fas fa-user"></i>
                                             <i class="err fas fa-exclamation-circle"></i>
                                         </div>
@@ -160,7 +177,7 @@
                                         <button id="proceed-payment" v-on:click="confirmDetails" class="form-control"><i class="fas fa-check mr-2"></i>Confirm Payment</button>
                                     </div>
                                     <div class="col-sm-12 col-md-6">
-                                        <button id="cancel" v-on:click="cancelPayment" class="form-control"><i class="fas fa-times mr-2"></i>Cancel Payment</button>
+                                        <button id="cancel" v-on:click="cancelPayment" class="form-control"><i class="fas fa-chevron-left mr-2"></i>Back</button>
                                     </div>
                                 </div>
                             </div>
@@ -390,6 +407,24 @@ export default {
             return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
         },
 
+        checkoutServiceFees()
+        {
+            if(this.paymentMethod === 'paymaya')
+            {
+                /* 3% + 10pesos service charge in paymaya */
+                this.serviceFee = this.subTotal * 0.03;
+                this.serviceFee = this.serviceFee + 10;
+            }
+
+            if(this.paymentMethod === 'gcash')
+            {
+                /* 2.5% service charge in gcash */
+                this.serviceFee = this.subTotal  * 0.025 ;
+            }
+
+            this.grandTotal = this.subTotal + this.serviceFee;
+        },
+
         computeTotals(index) {
             let amountArr = [];
             Object.entries(this.rptTableData[index]).forEach(([key, val]) => { amountArr.push(val.ln_amnt); });
@@ -402,8 +437,7 @@ export default {
             axios.get('checkout/initial_data').then(response => {
                 this.rptTableData = response.data.checkout;
                 this.subTotal = response.data.sub_total;
-                this.serviceFee = response.data.service_charge;
-                this.grandTotal = response.data.grand_total;
+                // this.serviceFee = response.data.service_charge;
             }).finally(() => this.isLoading = false);
         },
 
@@ -598,7 +632,9 @@ export default {
             axios.post(route, {
                 rpt: this.rptTableData,
                 // payment_method: this.paymentMethod,
-                fullname: this.payment.fullname,
+                first_name: this.payment.first_name,
+                last_name: this.payment.last_name,
+                middle_name: this.payment.middle_name,
                 address: this.payment.address,
                 city: this.payment.city,
                 state: this.payment.state,
@@ -607,12 +643,7 @@ export default {
                 servicefee: this.serviceFee,
                 grandtotal: this.grandTotal,
                 mobile: this.payment.mobile,
-                // card_no: this.payment.card_no,
-                // exp_date: this.payment.exp_date,
-                // cvc: this.payment.cvc
             }).then(response => {
-                /// setTimeout(function () { window.location.href = 'home'; }, 1500);
-                //this.messageBox('success', 'Transaction Success', response.data.message, 'Finish');
                 window.location.href = response.data.checkout;
             }).catch(error => {
                 this.messageBox('error', 'Failed', error.response.data.errors, 'Okay');
@@ -886,8 +917,8 @@ input {
 }
 
 #cancel {
-    color: #fff;
-    background: #d63031;
+    color: #2d3436;
+    background: #b2bec3;
 }
 
 /*.payment-breakdown {*/

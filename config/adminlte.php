@@ -14,7 +14,7 @@ return [
     |
     */
 
-    'title' => 'AdminLTE 3',
+    'title' => 'LGU-PAGADIAN ONLINE RPT PAYMENT',
     'title_prefix' => '',
     'title_postfix' => '',
 
