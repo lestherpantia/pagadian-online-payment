@@ -349,106 +349,103 @@ class PaymentController extends Controller
             $mobile = $payment->billing['phone'];
             $full_name = strtoupper($payment->billing['name']);
             $payment_id = $payment->id;
-
+            $billing_info = collect();
 
             foreach($bills as $item)
             {
 
                 $update_checkout = Checkout::where('bill_num', $item->bill_num)->where('paid', false)->where('user_id', Auth::user()->id)->first();
+                $update_checkout->paid = true;
+                $update_checkout->payment_date = date('m/d/Y');
+                $update_checkout->transaction_id = $payment_id;
+                $update_checkout->save();
 
-                if($update_checkout != null)
+                /* save to treasury database using pagadian_smartserve_database */
+
+                DB::connection('pgsql_2')->raw('LOCK TABLES cashiersetup WRITE');
+                $or_number = DB::connection('pgsql_2')
+                    ->table('cashiersetup')
+                    ->select('next_ornumber')->where('user_id', 'ARNOLD')
+                    ->first();
+
+
+                /* save data to colhdr */
+                DB::connection('pgsql_2')->raw('LOCK TABLES m99 WRITE');
+                $or_code = DB::connection('pgsql_2')
+                    ->table('m99')
+                    ->select('or_code')
+                    ->first();
+
+
+                /* get mp_code */
+                $mp_code = DB::connection('pgsql_2')
+                    ->table('m10')
+                    ->where('online_rpt', true)
+                    ->where('mp_desc', 'GCASH')
+                    ->select('mp_code')
+                    ->first();
+
+
+                $colhdr = new Colhdr();
+                $colhdr->or_code = $or_code->or_code;
+                $colhdr->trnx_date = date('Y-m-d');
+                $colhdr->full_name = $full_name;
+                $colhdr->or_number = $or_number->next_ornumber;
+                $colhdr->user_id = 'ARNOLD';
+                $colhdr->t_date = date('Y-m-d');
+                $colhdr->t_time = date('h:i');
+                $colhdr->value_date = date('Y-m-d');
+                $colhdr->mobile = $mobile;
+                $colhdr->coll_type = 2;
+                $colhdr->bill_num = $item->bill_num;
+                $colhdr->payor = $full_name;
+                $colhdr->save();
+
+
+                $collne = new Collne();
+                $collne->or_code = $or_code->or_code;
+                $collne->ln_num= 1;
+                $collne->pay_code = $mp_code->mp_code;
+                $collne->amnt_paid = $item->amount;
+                $collne->save();
+
+
+                $bill_info = DB::table('rpubilllne')->where('bill_num' , $item->bill_num)->get();
+                $ln_num = 1;
+
+
+                foreach($bill_info as $bill)
                 {
-                    $update_checkout->paid = true;
-                    $update_checkout->payment_date = date('m/d/Y');
-                    $update_checkout->transaction_id = $payment_id;
-                    $update_checkout->save();
-
-
-                    /* save to treasury database using pagadian_smartserve_database */
-
-                    DB::connection('pgsql_2')->raw('LOCK TABLES cashiersetup WRITE');
-                    $or_number = DB::connection('pgsql_2')
-                        ->table('cashiersetup')
-                        ->select('next_ornumber')->where('user_id', 'ARNOLD')
-                        ->first();
-
-
-                    /* save data to colhdr */
-                    DB::connection('pgsql_2')->raw('LOCK TABLES m99 WRITE');
-                    $or_code = DB::connection('pgsql_2')
-                        ->table('m99')
-                        ->select('or_code')
-                        ->first();
-
-
-                    /* get mp_code */
-                    $mp_code = DB::connection('pgsql_2')
-                        ->table('m10')
-                        ->where('online_rpt', true)
-                        ->where('mp_desc', 'GCASH')
-                        ->select('mp_code')
-                        ->first();
-
-
-                    $colhdr = new Colhdr();
-                    $colhdr->or_code = $or_code->or_code;
-                    $colhdr->trnx_date = date('Y-m-d');
-                    $colhdr->full_name = $full_name;
-                    $colhdr->or_number = $or_number->next_ornumber;
-                    $colhdr->user_id = 'ARNOLD';
-                    $colhdr->t_date = date('Y-m-d');
-                    $colhdr->t_time = date('h:i');
-                    $colhdr->value_date = date('Y-m-d');
-                    $colhdr->mobile = $mobile;
-                    $colhdr->coll_type = 2;
-                    $colhdr->bill_num = $item->bill_num;
-                    $colhdr->payor = $full_name;
-                    $colhdr->save();
-
-
-                    $collne = new Collne();
-                    $collne->or_code = $or_code->or_code;
-                    $collne->ln_num= 1;
-                    $collne->pay_code = $mp_code->mp_code;
-                    $collne->amnt_paid = $item->amount;
-                    $collne->save();
-
-
-                    $bill_info = DB::table('rpubilllne')->where('bill_num' , $item->bill_num)->get();
-                    $ln_num = 1;
-
-
-                    foreach($bill_info as $bill)
-                    {
-                        $collne4 = new Collne4();
-                        $collne4->or_code = $or_code->or_code;
-                        $collne4->ln_num = $ln_num;
-                        $collne4->rpu_num = $bill->rpu_num;
-                        $collne4->yr1 = $bill->yr1;
-                        $collne4->yr2 = $bill->yr2;
-                        $collne4->tax_paid = $bill->tax_amnt;
-                        $collne4->pen_paid = $bill->penalty;
-                        $collne4->bill_num = $bill->bill_num;
-                        $collne4->sef_paid = $bill->sef_amnt;
-                        $collne4->penalty_sef_paid = $bill->penalty_sef;
-                        $collne4->save();
-                        $ln_num++;
-                    }
-
-                    $new_or_code = str_pad($or_code->or_code + 1, 8, 0, STR_PAD_LEFT);
-                    $new_or_number = str_pad($or_number->next_ornumber + 1, 15, 0, STR_PAD_LEFT);
-
-
-                    DB::connection('pgsql_2')->table('m99')->update(['or_code' => $new_or_code]);
-                    DB::connection('pgsql_2')->table('cashiersetup')->where('user_id', 'ARNOLD')->update(['next_ornumber' => $new_or_number]);
+                    $collne4 = new Collne4();
+                    $collne4->or_code = $or_code->or_code;
+                    $collne4->ln_num = $ln_num;
+                    $collne4->rpu_num = $bill->rpu_num;
+                    $collne4->yr1 = $bill->yr1;
+                    $collne4->yr2 = $bill->yr2;
+                    $collne4->tax_paid = $bill->tax_amnt;
+                    $collne4->pen_paid = $bill->penalty;
+                    $collne4->bill_num = $bill->bill_num;
+                    $collne4->sef_paid = $bill->sef_amnt;
+                    $collne4->penalty_sef_paid = $bill->penalty_sef;
+                    $collne4->save();
+                    $ln_num++;
                 }
+
+                $new_or_code = str_pad($or_code->or_code + 1, 8, 0, STR_PAD_LEFT);
+                $new_or_number = str_pad($or_number->next_ornumber + 1, 15, 0, STR_PAD_LEFT);
+
+
+                DB::connection('pgsql_2')->table('m99')->update(['or_code' => $new_or_code]);
+                DB::connection('pgsql_2')->table('cashiersetup')->where('user_id', 'ARNOLD')->update(['next_ornumber' => $new_or_number]);
+
+                $billing_info->push(['bill_num' => $item->bill_num, 'amount' => $item->amount]);
             }
 
             $email_details = collect([
                 'name' => $full_name,
                 'transaction_date' => date('Y-m-d'),
-                'items' => $bills,
-                'total' => $amount,
+                'items' => $billing_info,
+                'total' => $amount + $service_charge,
                 'invoice' => '00000000001234',
                 'method' => 'gcash',
                 'transaction_fee' => $service_charge,

@@ -38,6 +38,11 @@
                             </tr>
                         </thead>
                         <tbody>
+<!--                            <tr v-if="rptTableData.lenght === 0">-->
+<!--                                <td colspan="7" class="text-center" style="font-style: italic">-->
+<!--                                    NO PENDING TRANSACTIONS-->
+<!--                                </td>-->
+<!--                            </tr>-->
                             <template v-for="(item, index) in rptTableData">
                                 <tr>
                                     <td style="width: 5%; vertical-align: top" class="text-center p-2">

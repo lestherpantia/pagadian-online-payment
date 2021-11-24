@@ -60,38 +60,24 @@
     <img style="width: 100%; height: 200px;" src="{{ asset('image/email-header.png') }}">
 </div>
 
-<div style="padding: 50px;">
+<?php $transaction_fee = $data['transaction_fee'] ?>
+<?php $total = $data['total'] ?>
 
+<div style="padding: 50px;">
 <span style="font-size: 20px;">Received From: {{ $data['name'] }}</span>
 <table class="header-table" style="width: 100%; font-size: 13px">
 <tr>
-    <th>No: {{ $data['invoice'] }}</th>
+<th>No: {{ $data['invoice'] }}</th>
 </tr>
 <tr>
-    <th>Date | Time: {{ date('m/d/y H:i') }}</th>
+<th>Date | Time: {{ date('m/d/y H:i') }}</th>
 </tr>
 <tr>
-    <th>Form of Payment: {{ strtoupper($data['method']) }}</th>
+<th>Form of Payment: {{ strtoupper($data['method']) }}</th>
 </tr>
 </table>
 
 <table class="rpt_table">
-<tfoot>
-<tr>
-<th style="text-align: right">TRANSACTION FEE:</th>
-<th style="text-align: right;">₱ {{ number_format($data['transaction_fee'], 2) }}</th>
-</tr>
-<tr>
-<th style="text-align: right">TOTAL:</th>
-<th style="text-align: right;">₱ {{ number_format($data['total'], 2) }}</th>
-</tr>
-</tfoot>
-<thead>
-<tr>
-<th>BILL NO.</th>
-<th style="text-align: right;">TOTAL</th>
-</tr>
-</thead>
 <tbody>
 @foreach($data['items'] as $data)
 <tr>
@@ -100,6 +86,23 @@
 </tr>
 @endforeach
 </tbody>
+<tfoot>
+<tr>
+<th style="text-align: right">TRANSACTION FEE:</th>
+<th style="text-align: right;">₱ {{ number_format($transaction_fee, 2) }}</th>
+</tr>
+<tr>
+<th style="text-align: right">TOTAL:</th>
+<th style="text-align: right;">₱ {{ number_format($total, 2) }}</th>
+</tr>
+</tfoot>
+<thead>
+<tr>
+<th>BILL NO.</th>
+<th style="text-align: right;">TOTAL</th>
+</tr>
+</thead>
+
 </table>
 
 Thanks,<br>
