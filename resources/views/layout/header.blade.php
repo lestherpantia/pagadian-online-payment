@@ -49,7 +49,7 @@
         <div class="col-6 d-flex align-items-center justify-content-end">
             <div class="user d-flex align-items-center p-2" style="height: 50px">
                 <i class="fas fa-user-circle" style="font-size: 25px"></i>
-                <span class="mr-2 ml-2" style="font-size: 13px;">{{ Auth::user()->name }}</span>
+                <span class="mr-2 ml-2" style="font-size: 13px;">{{ Auth::user()->first_name }}</span>
                 <span><i class="fas fa-caret-down mt-1"></i></span>
 
                 <ul class="hover-option">

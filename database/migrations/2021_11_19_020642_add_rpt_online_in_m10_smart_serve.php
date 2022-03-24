@@ -26,7 +26,7 @@ class AddRptOnlineInM10SmartServe extends Migration
     public function down()
     {
         Schema::connection('pgsql_2')->table('m10', function (Blueprint $table) {
-            //
+
         });
     }
 }

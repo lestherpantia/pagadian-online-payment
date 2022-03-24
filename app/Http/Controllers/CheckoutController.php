@@ -41,6 +41,10 @@ class CheckoutController extends Controller
 
        return response()->json([
            'checkout' => $checkout,
+           'last_name' => Auth::user()->last_name,
+           'first_name' => Auth::user()->first_name,
+           'middle_name' => Auth::user()->middle_name,
+           'mobile' => Auth::user()->mobile,
            'sub_total' => $sub_total,
            'service_charge' => $service_charge,
            'grand_total' => $grand_total], 200);

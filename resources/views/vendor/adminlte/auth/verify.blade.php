@@ -15,10 +15,10 @@
         Tip: Check your spam folder in case the email was incorrectly identified.
     </p>
 
-    <p class="text-center mb-5" style="font-size: 14px">
-        if you have not received a verification email or if you mistyped your email <br>
-        address, you can resend the verification email.
-    </p>
+{{--    <p class="text-center mb-5" style="font-size: 14px">--}}
+{{--        if you have not received a verification email or if you mistyped your email <br>--}}
+{{--        address, you can resend the verification email.--}}
+{{--    </p>--}}
 
     <form method="POST" action="{{ route('verification.resend') }}">
         @csrf

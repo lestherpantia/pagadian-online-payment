@@ -19,12 +19,61 @@
         {{ csrf_field() }}
 
         {{-- Name field --}}
-        <label>Full name</label>
+        <div class="row">
+            <div class="col-12">
+                <label>Last name</label>
+                <div class="input-group mb-3">
+                    <input type="text" name="last_name" class="form-control p-2 rounded {{ $errors->has('last_name') ? 'is-invalid' : '' }}" value="{{ old('last_name') }}" autofocus>
+                    @if($errors->has('last_name'))
+                        <div class="invalid-feedback">
+                            <strong>{{ $errors->first('last_name') }}</strong>
+                        </div>
+                    @endif
+                </div>
+            </div>
+            <div class="col-6">
+                <label>First name</label>
+                <div class="input-group mb-3">
+                    <input type="text" name="first_name" class="form-control p-2 rounded {{ $errors->has('first_name') ? 'is-invalid' : '' }}" value="{{ old('first_name') }}" autofocus>
+                    @if($errors->has('first_name'))
+                        <div class="invalid-feedback">
+                            <strong>{{ $errors->first('first_name') }}</strong>
+                        </div>
+                    @endif
+                </div>
+            </div>
+            <div class="col-6">
+                <label>Middle name</label>
+                <div class="input-group mb-3">
+                    <input type="text" name="middle_name" class="form-control p-2 rounded {{ $errors->has('middle_name') ? 'is-invalid' : '' }}" value="{{ old('middle_name') }}" autofocus>
+                    @if($errors->has('middle_name'))
+                        <div class="invalid-feedback">
+                            <strong>{{ $errors->first('middle_name') }}</strong>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+
+        {{-- Email field --}}
+        <label>Email Address</label>
         <div class="input-group mb-3">
-            <input type="text" name="name" class="form-control p-2 rounded {{ $errors->has('name') ? 'is-invalid' : '' }}" value="{{ old('name') }}" autofocus>
-            @if($errors->has('name'))
+            <input type="email" name="email" class="form-control p-2 rounded {{ $errors->has('email') ? 'is-invalid' : '' }}"
+                   value="{{ old('email') }}">
+            @if($errors->has('email'))
                 <div class="invalid-feedback">
-                    <strong>{{ $errors->first('name') }}</strong>
+                    <strong>{{ $errors->first('email') }}</strong>
+                </div>
+            @endif
+        </div>
+
+        {{-- Mobile Number --}}
+        <label>Mobile Number</label>
+        <div class="input-group mb-3">
+            <input type="text" name="mobile" class="form-control p-2 rounded {{ $errors->has('mobile') ? 'is-invalid' : '' }}" maxlength="11">
+            @if($errors->has('mobile'))
+                <div class="invalid-feedback">
+                    <strong>{{ $errors->first('mobile') }}</strong>
                 </div>
             @endif
         </div>
@@ -56,29 +105,6 @@
             </div>
         </div>
 
-        {{-- Email field --}}
-        <label>Email Address</label>
-        <div class="input-group mb-3">
-            <input type="email" name="email" class="form-control p-2 rounded {{ $errors->has('email') ? 'is-invalid' : '' }}"
-                   value="{{ old('email') }}">
-            @if($errors->has('email'))
-                <div class="invalid-feedback">
-                    <strong>{{ $errors->first('email') }}</strong>
-                </div>
-            @endif
-        </div>
-
-        {{-- Mobile Number --}}
-        <label>Mobile Number</label>
-        <div class="input-group mb-3">
-            <input type="text" name="mobile" class="form-control p-2 rounded {{ $errors->has('mobile') ? 'is-invalid' : '' }}" maxlength="11">
-            @if($errors->has('mobile'))
-                <div class="invalid-feedback">
-                    <strong>{{ $errors->first('mobile') }}</strong>
-                </div>
-            @endif
-        </div>
-
         <div class="term-box">
             <input type="checkbox" name="terms" id="terms">
             <label for="terms" style="font-weight: normal">I agree to the <a style="color:#01AA4F">Terms</a> and <a style="color:#01AA4F">Privacy Policy</a>.</label>
@@ -104,6 +130,7 @@
             <li>At least 8 Characters</li>
             <li>At least one uppercase letter</li>
             <li>At least one number</li>
+            <li>At least one special character</li>
         </ul>
 
         {{-- Register button --}}

@@ -2539,7 +2539,6 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 //
 //
 //
-//
 // Import component
 
 
@@ -2606,7 +2605,11 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
       this.isLoading = true;
       axios.get('checkout/initial_data').then(function (response) {
         _this.rptTableData = response.data.checkout;
-        _this.subTotal = response.data.sub_total; // this.serviceFee = response.data.service_charge;
+        _this.subTotal = response.data.sub_total;
+        _this.payment.mobile = response.data.mobile;
+        _this.payment.first_name = response.data.first_name;
+        _this.payment.last_name = response.data.last_name;
+        _this.payment.middle_name = response.data.middle_name; // this.serviceFee = response.data.service_charge;
       })["finally"](function () {
         return _this.isLoading = false;
       });
@@ -2712,12 +2715,6 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
     checkPayment: function checkPayment(index, e) {
       var _this2 = this;
 
-      // console.log(index);
-      //
-      // let amount_to_pay = e.target.checked ? this.rptTableData[index]['total'] : 0;
-      // let checked = e.target.checked;
-      //
-      // this.totalAmount = 0;
       var total = this.computeTotals(index);
 
       if (e.target.checked) {
@@ -2734,15 +2731,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
         console.log(response.status);
       })["finally"](function () {
         _this2.isLoading = false;
-      }); //
-      // axios.post('payment/add_checkout', {
-      //     data: this.rptTableData[index],
-      // });
-      // $('#rpt-table tbody tr:eq(' + index + ')').find('input[type=number]').attr('disabled', checked ? false : true);
-      // $('#rpt-table tbody tr:eq(' + index + ')').find('input[type=number]').removeClass('invalid').siblings('.err_amount').text('');
-      // this.rptTableData[index]['for_payment'] = checked;
-      // this.rptTableData[index]['amount'] = amount_to_pay;
-      // this.reComputeTotalAmount();
+      });
     },
     validateAmountToPay: function validateAmountToPay(e, index, amount) {
       if (e.target.value < 100) {
@@ -69822,42 +69811,6 @@ var render = function () {
                       }),
                     ]
                   ),
-                  _vm._v(" "),
-                  _c(
-                    "div",
-                    { staticClass: "p-2 d-inline-flex align-items-center" },
-                    [
-                      _vm._m(3),
-                      _vm._v(" "),
-                      _c("input", {
-                        directives: [
-                          {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.paymentMethod,
-                            expression: "paymentMethod",
-                          },
-                        ],
-                        attrs: {
-                          name: "payment_type",
-                          type: "radio",
-                          id: "gcash",
-                          value: "gcash",
-                        },
-                        domProps: {
-                          checked: _vm._q(_vm.paymentMethod, "gcash"),
-                        },
-                        on: {
-                          change: [
-                            function ($event) {
-                              _vm.paymentMethod = "gcash"
-                            },
-                            _vm.checkoutServiceFees,
-                          ],
-                        },
-                      }),
-                    ]
-                  ),
                 ]
               ),
             ]),
@@ -69878,7 +69831,7 @@ var render = function () {
                   _vm._v(" "),
                   _c("div", { staticClass: "personal-info" }, [
                     _c("div", { staticClass: "row" }, [
-                      _vm._m(4),
+                      _vm._m(3),
                       _vm._v(" "),
                       _c("div", { staticClass: "card-info col-4" }, [
                         _c("label", [_vm._v("Last name")]),
@@ -70193,7 +70146,7 @@ var render = function () {
                         staticStyle: { width: "100%", "font-size": "12px" },
                       },
                       [
-                        _vm._m(5),
+                        _vm._m(4),
                         _vm._v(" "),
                         _c(
                           "tbody",
@@ -70345,16 +70298,6 @@ var staticRenderFns = [
       "label",
       { staticStyle: { margin: "0 10px 0 0" }, attrs: { for: "paymaya" } },
       [_c("img", { attrs: { src: "public/image/paymaya_btn.png" } })]
-    )
-  },
-  function () {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "label",
-      { staticStyle: { margin: "0 10px 0 0" }, attrs: { for: "gcash" } },
-      [_c("img", { attrs: { src: "public/image/gcash_btn.png" } })]
     )
   },
   function () {

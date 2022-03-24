@@ -33,11 +33,10 @@
                                 <label for="paymaya" style="margin: 0 10px 0 0"><img src="public/image/paymaya_btn.png"></label>
                                 <input name="payment_type" type="radio" id="paymaya" value="paymaya" v-model="paymentMethod" v-on:change="checkoutServiceFees">
                             </div>
-
-                            <div class="p-2 d-inline-flex align-items-center">
-                                <label for="gcash" style="margin: 0 10px 0 0"><img src="public/image/gcash_btn.png"></label>
-                                <input name="payment_type" type="radio" id="gcash" value="gcash" v-model="paymentMethod" v-on:change="checkoutServiceFees">
-                            </div>
+<!--                            <div class="p-2 d-inline-flex align-items-center">-->
+<!--                                <label for="gcash" style="margin: 0 10px 0 0"><img src="public/image/gcash_btn.png"></label>-->
+<!--                                <input name="payment_type" type="radio" id="gcash" value="gcash" v-model="paymentMethod" v-on:change="checkoutServiceFees">-->
+<!--                            </div>-->
                         </div>
                     </div>
                 </div>
@@ -437,6 +436,10 @@ export default {
             axios.get('checkout/initial_data').then(response => {
                 this.rptTableData = response.data.checkout;
                 this.subTotal = response.data.sub_total;
+                this.payment.mobile = response.data.mobile;
+                this.payment.first_name = response.data.first_name;
+                this.payment.last_name = response.data.last_name;
+                this.payment.middle_name = response.data.middle_name;
                 // this.serviceFee = response.data.service_charge;
             }).finally(() => this.isLoading = false);
         },
@@ -557,13 +560,6 @@ export default {
 
         checkPayment(index, e) {
 
-            // console.log(index);
-            //
-            // let amount_to_pay = e.target.checked ? this.rptTableData[index]['total'] : 0;
-            // let checked = e.target.checked;
-            //
-            // this.totalAmount = 0;
-
             let total = this.computeTotals(index);
 
             if(e.target.checked)
@@ -588,18 +584,6 @@ export default {
                 this.isLoading = false
             });
 
-
-
-            //
-            // axios.post('payment/add_checkout', {
-            //     data: this.rptTableData[index],
-            // });
-
-            // $('#rpt-table tbody tr:eq(' + index + ')').find('input[type=number]').attr('disabled', checked ? false : true);
-            // $('#rpt-table tbody tr:eq(' + index + ')').find('input[type=number]').removeClass('invalid').siblings('.err_amount').text('');
-            // this.rptTableData[index]['for_payment'] = checked;
-            // this.rptTableData[index]['amount'] = amount_to_pay;
-            // this.reComputeTotalAmount();
         },
 
         validateAmountToPay(e, index, amount) {
